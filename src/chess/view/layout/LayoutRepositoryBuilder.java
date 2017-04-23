@@ -5,7 +5,6 @@ import chess.domain.cell.Char;
 import chess.domain.cell.Digit;
 import chess.view.Dimension;
 import chess.view.Position;
-import chess.view.image.CellLayoutFactory;
 
 /**
  * Created by nikitap4.92@gmail.com

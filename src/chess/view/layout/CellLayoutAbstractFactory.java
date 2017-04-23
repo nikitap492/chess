@@ -7,7 +7,6 @@ import chess.view.CellView;
 import chess.view.Dimension;
 import chess.view.PieceView;
 import chess.view.Position;
-import chess.view.image.CellLayoutFactory;
 import chess.view.image.CellViewFactory;
 import chess.view.image.PieceViewFactory;
 
