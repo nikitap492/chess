@@ -1,11 +1,11 @@
-package chess.view;
+package chess.view.layout;
 
 import chess.domain.cell.Cell;
 import chess.domain.cell.Char;
 import chess.domain.cell.Digit;
+import chess.view.Dimension;
+import chess.view.Position;
 import chess.view.image.CellLayoutFactory;
-import chess.view.layout.CellLayoutRepository;
-import chess.view.layout.DefaultCellLayoutRepository;
 
 /**
  * Created by nikitap4.92@gmail.com
@@ -58,8 +58,6 @@ public class LayoutRepositoryBuilder {
 
     public CellLayoutRepository build(){
 
-
-
         DefaultCellLayoutRepository repository = new DefaultCellLayoutRepository();
         for (Char c: Char.values())
             for (Digit d: Digit.values()){
@@ -67,7 +65,8 @@ public class LayoutRepositoryBuilder {
                 Dimension dimension = new Dimension(cellHeight , cellWidth);
 
                 Cell cell = new Cell(c, d);
-                repository.put(cell, factory.create(cell, position, dimension));
+                CellLayout cellLayout = factory.create(cell, position, dimension);
+                repository.put(cell, cellLayout);
             }
         return repository;
     }
