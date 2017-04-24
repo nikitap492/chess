@@ -38,4 +38,53 @@ final class Directions {
         return  --struct.digitOrder >= 0  && --struct.charOrder >= 0;
     }
 
+    static boolean northNorthWest(OrderStruct struct){
+        struct.digitOrder += 2;
+        struct.charOrder -= 1;
+        return struct.digitOrder <= 7 && struct.charOrder >= 0;
+    }
+
+    static boolean northWestWest(OrderStruct struct){
+        struct.digitOrder += 1;
+        struct.charOrder -= 2;
+        return struct.digitOrder <= 7 && struct.charOrder >= 0;
+    }
+
+    static boolean northEastEast(OrderStruct struct){
+        struct.digitOrder += 1;
+        struct.charOrder += 2;
+        return struct.digitOrder <= 7 && struct.charOrder <= 7;
+    }
+
+    static boolean northNorthEast(OrderStruct struct){
+        struct.digitOrder += 2;
+        struct.charOrder += 1;
+        return struct.digitOrder <= 7 && struct.charOrder <= 7;
+    }
+
+    static boolean southSouthWest(OrderStruct struct){
+        struct.digitOrder -= 2;
+        struct.charOrder -= 1;
+        return struct.digitOrder >= 0 && struct.charOrder >= 0;
+    }
+
+    static boolean southWestWest(OrderStruct struct){
+        struct.digitOrder -= 1;
+        struct.charOrder -= 2;
+        return struct.digitOrder >= 0 && struct.charOrder >= 0;
+    }
+
+    static boolean southEastEast(OrderStruct struct){
+        struct.digitOrder -= 1;
+        struct.charOrder += 2;
+        return struct.digitOrder >= 0 && struct.charOrder <= 7;
+    }
+
+    static boolean southSouthEast(OrderStruct struct){
+        struct.digitOrder -= 2;
+        struct.charOrder += 1;
+        return struct.digitOrder >= 0 && struct.charOrder <= 7;
+    }
+
+
 }
