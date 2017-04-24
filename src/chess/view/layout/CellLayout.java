@@ -1,5 +1,6 @@
 package chess.view.layout;
 
+import chess.domain.piece.Piece;
 import chess.view.CellView;
 import chess.view.Dimension;
 import chess.view.PieceView;
@@ -21,7 +22,7 @@ public interface CellLayout  {
 
     void clearCellImage();
 
-    void putPieceImage(PieceImage pieceImage);
+    void putPieceImage(Piece piece, PieceImage pieceImage);
 
     void clearPieceImage();
 

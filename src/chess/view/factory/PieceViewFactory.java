@@ -1,14 +1,23 @@
 package chess.view.factory;
 
-import chess.domain.piece.PieceColor;
-import chess.domain.piece.PieceType;
+import chess.command.ClickListener;
 import chess.view.PieceView;
 
 /**
  * Created by nikitap4.92@gmail.com
  * 22.04.17.
  */
-public interface PieceViewFactory {
+public abstract class PieceViewFactory {
 
-    PieceView create(PieceType type, PieceColor color);
+    private ClickListener<PieceView> clickListener;
+
+    public PieceViewFactory(ClickListener<PieceView> clickListener) {
+        this.clickListener = clickListener;
+    }
+
+    protected ClickListener<PieceView> getClickListener() {
+        return clickListener;
+    }
+
+    public abstract PieceView create();
 }

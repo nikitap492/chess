@@ -1,14 +1,12 @@
 package chess.view.layout;
 
 import chess.domain.cell.Cell;
-import chess.domain.piece.PieceColor;
-import chess.domain.piece.PieceType;
 import chess.view.CellView;
 import chess.view.Dimension;
 import chess.view.PieceView;
 import chess.view.Position;
-import chess.view.image.CellViewFactory;
-import chess.view.image.PieceViewFactory;
+import chess.view.factory.CellViewFactory;
+import chess.view.factory.PieceViewFactory;
 
 /**
  * Created by nikitap4.92@gmail.com
@@ -27,18 +25,16 @@ public abstract class CellLayoutAbstractFactory implements CellLayoutFactory {
     @Override
     public CellLayout create(Cell cell, Position position, Dimension dimension) {
         CellLayout cellLayout = empty();
-        CellView cellView = cellViewFactory.create();
-        cellLayout.addCellView(cellView);
-        if(hasPiece(cell)){
-            PieceColor color = getColor(cell);
-            PieceType type = getType(cell);
-            PieceView pieceView = pieceViewFactory.create(type, color);
-            cellLayout.addPieceView(pieceView);
-        }
 
         cellLayout.setDimension(dimension);
         cellLayout.setPosition(position);
 
+        CellView cellView = cellViewFactory.create();
+        cellLayout.addCellView(cellView);
+
+        PieceView pieceView = pieceViewFactory.create();
+
+        cellLayout.addPieceView(pieceView);
         return cellLayout;
     }
 
