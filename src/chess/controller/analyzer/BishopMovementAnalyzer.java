@@ -78,7 +78,7 @@ class BishopMovementAnalyzer {
     }
 
     static boolean rightDown(OrderStruct struct){
-        return  --struct.charOrder >= 0  && ++struct.digitOrder <= 8;
+        return  --struct.digitOrder >= 0  && ++struct.charOrder <= 8;
     }
 
     static boolean leftDown(OrderStruct struct){
