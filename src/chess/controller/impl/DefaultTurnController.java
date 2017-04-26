@@ -12,7 +12,7 @@ import static chess.domain.piece.PieceColor.WHITE;
  */
 public class DefaultTurnController implements TurnController {
 
-    private PieceColor color;
+    private PieceColor color = WHITE;
 
     @Override
     public void nextTurn() {

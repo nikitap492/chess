@@ -7,11 +7,15 @@ import chess.domain.piece.PieceType;
 import chess.view.PieceView;
 import chess.view.display.PieceDisplay;
 
+import java.util.Optional;
+
 /**
  * @author Poshivalov Nikita
  * @since 20.04.2017.
  */
 public interface PieceController extends Subscriber<PieceView> {
+
+    void arrangePieces();
 
     void setPieceDisplay(PieceDisplay pieceDisplay);
 
@@ -28,5 +32,7 @@ public interface PieceController extends Subscriber<PieceView> {
     void create(Piece piece);
 
     void transform(Piece piece, PieceType pieceType);
+
+    Optional<Piece> byCell(Cell cell);
 
 }
