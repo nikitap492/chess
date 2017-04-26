@@ -1,7 +1,6 @@
 package chess.controller;
 
 import chess.domain.movement.Movement;
-import chess.domain.piece.PieceColor;
 
 /**
  * @author Poshivalov Nikita
@@ -9,11 +8,7 @@ import chess.domain.piece.PieceColor;
  */
 public interface CheckmateController {
 
-    void check();
+    void setMovementController(MovementController movementController);
 
-    boolean isCheck();
-
-    boolean isNonCheck(Movement movement, PieceColor color);
-
-    boolean isCheckmate();
+    boolean isNonCheck(Movement movement);
 }
