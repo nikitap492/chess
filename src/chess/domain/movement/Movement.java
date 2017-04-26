@@ -1,6 +1,7 @@
 package chess.domain.movement;
 
 import chess.domain.cell.Cell;
+import chess.domain.piece.Piece;
 
 /**
  * @author Poshivalov Nikita
@@ -8,14 +9,14 @@ import chess.domain.cell.Cell;
  */
 public class Movement {
 
-    private MovementType type;
-    private Cell to;
-    private Cell from;
+    private final Piece piece;
+    private final MovementType type;
+    private final Cell to;
 
-    public Movement(MovementType type, Cell to, Cell from) {
+    public Movement(Piece piece, Cell to, MovementType type) {
         this.type = type;
         this.to = to;
-        this.from = from;
+        this.piece = piece;
     }
 
     public MovementType getType() {
@@ -26,7 +27,7 @@ public class Movement {
         return to;
     }
 
-    public Cell getFrom() {
-        return from;
+    public Piece getPiece() {
+        return piece;
     }
 }
