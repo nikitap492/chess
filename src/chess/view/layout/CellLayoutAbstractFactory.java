@@ -29,7 +29,7 @@ public abstract class CellLayoutAbstractFactory implements CellLayoutFactory {
         cellLayout.setDimension(dimension);
         cellLayout.setPosition(position);
 
-        CellView cellView = cellViewFactory.create();
+        CellView cellView = cellViewFactory.create(cell);
         cellLayout.addCellView(cellView);
 
         PieceView pieceView = pieceViewFactory.create();

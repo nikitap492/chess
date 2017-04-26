@@ -24,7 +24,7 @@ public class DefaultPieceDisplay implements PieceDisplay {
     public void put(Piece piece) {
         CellLayout container = layoutRepository.get(piece.getCell());
         PieceImage pieceImage = imageRepository.get(piece);
-        container.putPieceImage(pieceImage);
+        container.putPieceImage(piece, pieceImage);
     }
 
     @Override
