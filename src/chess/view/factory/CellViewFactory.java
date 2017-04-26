@@ -1,6 +1,7 @@
 package chess.view.factory;
 
 import chess.command.ClickListener;
+import chess.domain.cell.Cell;
 import chess.view.CellView;
 
 /**
@@ -16,7 +17,7 @@ public abstract class CellViewFactory {
     }
 
 
-    public abstract CellView create();
+    public abstract CellView create(Cell cell);
 
     protected ClickListener<CellView> getClickListener() {
         return clickListener;
