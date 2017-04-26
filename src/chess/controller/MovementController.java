@@ -12,7 +12,9 @@ import java.util.Set;
  */
 public interface MovementController {
 
-    Set<Movement> possibleMovements(Piece piece);
+    Set<Movement> possible(Piece piece);
+
+    Set<Movement> all(Piece piece);
 
     void moveToCell(Cell cell);
 

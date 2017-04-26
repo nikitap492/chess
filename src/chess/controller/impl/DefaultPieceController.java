@@ -45,10 +45,10 @@ public class DefaultPieceController implements PieceController {
     @Override
     public void arrangePieces() {
         pieces = new HashMap<>();
-        for (Char c: Char.values()){
-            for (Digit d : Digit.values()){
+        for (Char c : Char.values()) {
+            for (Digit d : Digit.values()) {
                 Cell cell = new Cell(c, d);
-                if (hasPiece(cell)){
+                if (hasPiece(cell)) {
                     PieceType type = getType(cell);
                     PieceColor color = getColor(cell);
                     Piece piece = new Piece(type, color);
@@ -57,11 +57,6 @@ public class DefaultPieceController implements PieceController {
                 }
             }
         }
-    }
-
-    @Override
-    public void setPieceDisplay(PieceDisplay pieceDisplay) {
-        this.pieceDisplay = pieceDisplay;
     }
 
     @Override
@@ -113,20 +108,25 @@ public class DefaultPieceController implements PieceController {
     }
 
     @Override
+    public Map<Cell, Piece> pieces() {
+        return pieces;
+    }
+
+    @Override
     public void update(Click<PieceView> t) {
         cellController.clear();
         Piece piece = t.target().piece();
 
         boolean isPossible = selectController.selectIsPossible(piece);
 
-        if(isPossible){
+        if (isPossible) {
             cellController.select(piece.getCell());
 
-            Set<Movement> movements = movementController.possibleMovements(piece);
-            for (Movement movement: movements){
+            Set<Movement> movements = movementController.possible(piece);
+            for (Movement movement : movements) {
                 Cell to = movement.getTo();
                 MovementType type = movement.getType();
-                switch (type){
+                switch (type) {
                     case CHECK:
                         cellController.check(to);
                         break;
@@ -148,18 +148,18 @@ public class DefaultPieceController implements PieceController {
         return digit == ONE || digit == TWO || digit == EIGHT || digit == SEVEN;
     }
 
-    private PieceColor getColor(Cell cell){
-        if(cell.getDigit() == ONE || cell.getDigit() == TWO){
+    private PieceColor getColor(Cell cell) {
+        if (cell.getDigit() == ONE || cell.getDigit() == TWO) {
             return PieceColor.WHITE;
-        }else return PieceColor.BLACK;
+        } else return PieceColor.BLACK;
     }
 
-    private PieceType getType(Cell cell){
+    private PieceType getType(Cell cell) {
         Digit digit = cell.getDigit();
-        if(digit == TWO || digit == SEVEN){
+        if (digit == TWO || digit == SEVEN) {
             return PAWN;
-        }else {
-            switch (cell.getChar()){
+        } else {
+            switch (cell.getChar()) {
                 case A:
                 case H:
                     return ROOK;
@@ -170,13 +170,9 @@ public class DefaultPieceController implements PieceController {
                 case F:
                     return BISHOP;
                 case D:
-                    if(digit == ONE)
-                        return QUEEN;
-                    else return KING;
+                    return QUEEN;
                 case E:
-                    if(digit == ONE)
-                        return KING;
-                    else return QUEEN;
+                    return KING;
             }
         }
         return null;

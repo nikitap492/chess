@@ -100,7 +100,7 @@ class PawnMovementAnalyser extends PieceMovementAnalyzer {
         Cell cell = new Cell(piece.getCell().getChar(), digit);
         Optional<Piece> optional = pieceController.byCell(cell);
         if (!optional.isPresent()) {
-            movements.add(new Movement(MOVE, cell, piece.getCell()));
+            movements.add(new Movement(piece, cell, MOVE));
             return false;
         }
         return true;

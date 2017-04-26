@@ -13,8 +13,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static chess.domain.movement.MovementType.CHECK;
+import static chess.domain.movement.MovementType.KILL;
 
 
 /**
@@ -50,31 +52,32 @@ public class MovementAnalyzer implements MovementController {
     }
 
     @Override
-    public Set<Movement> possibleMovements(Piece piece) {
-        possibleMovements = null;
+    public Set<Movement> possible(Piece piece) {
         this.piece = piece;
+        possibleMovements =  all(piece).stream()
+                .filter(checkmateController::isNonCheck)
+                .collect(Collectors.toSet());
+        return possibleMovements;
+    }
+
+    @Override
+    public Set<Movement> all(Piece piece){
         PieceType type = piece.getType();
         switch (type){
             case PAWN:
-                possibleMovements = pawnMovementAnalyzer.analyze(piece);
-                break;
+                return pawnMovementAnalyzer.analyze(piece);
             case KNIGHT:
-                possibleMovements = knightMovementAnalyzer.analyze(piece);
-                break;
+                return knightMovementAnalyzer.analyze(piece);
             case BISHOP:
-                possibleMovements = bishopMovementAnalyzer.analyze(piece);
-                break;
+                return bishopMovementAnalyzer.analyze(piece);
             case ROOK:
-                possibleMovements = rookMovementAnalyzer.analyze(piece);
-                break;
+                return rookMovementAnalyzer.analyze(piece);
             case QUEEN:
-                possibleMovements = queenMovementAnalyzer.analyze(piece);
-                break;
+                return queenMovementAnalyzer.analyze(piece);
             case KING:
-                possibleMovements = kingMovementAnalyzer.analyze(piece);
-                break;
+                return kingMovementAnalyzer.analyze(piece);
         }
-        return possibleMovements;
+        return null;
     }
 
     @Override
@@ -87,11 +90,14 @@ public class MovementAnalyzer implements MovementController {
 
     private void doMove(Movement movement) {
         movements.add(movement);
-        pieceController.move(piece, movement.getTo());
-        turnController.nextTurn();
         if(movement.getType() == CHECK){
             checkmateController.check();
         }
+        if (movement.getType() == KILL){
+            pieceController.kill(piece);
+        }
+        pieceController.move(piece, movement.getTo());
+        turnController.nextTurn();
     }
 
 }

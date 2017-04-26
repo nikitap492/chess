@@ -5,8 +5,8 @@ import chess.domain.cell.Cell;
 import chess.domain.piece.Piece;
 import chess.domain.piece.PieceType;
 import chess.view.PieceView;
-import chess.view.display.PieceDisplay;
 
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -16,8 +16,6 @@ import java.util.Optional;
 public interface PieceController extends Subscriber<PieceView> {
 
     void arrangePieces();
-
-    void setPieceDisplay(PieceDisplay pieceDisplay);
 
     void setCellController(CellController cellController);
 
@@ -35,4 +33,5 @@ public interface PieceController extends Subscriber<PieceView> {
 
     Optional<Piece> byCell(Cell cell);
 
+    Map<Cell, Piece> pieces();
 }

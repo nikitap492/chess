@@ -12,7 +12,6 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import static chess.domain.movement.MovementType.KILL;
 import static chess.domain.movement.MovementType.MOVE;
@@ -37,9 +36,7 @@ abstract class PieceMovementAnalyzer {
     Set<Movement> analyze(Piece piece){
         Set<Movement> movements = new HashSet<>();
         addMovements(movements, piece);
-        return movements.stream()
-                .filter(n -> checkmateController.isNonCheck(n , piece.getColor()))
-                .collect(Collectors.toSet());
+        return movements;
     }
 
     void crossBoardMovements(Set<Movement> movements, Piece piece, Function<OrderStruct, Boolean> direction){
@@ -62,15 +59,14 @@ abstract class PieceMovementAnalyzer {
     }
 
     private boolean addOneStepMovement(Set<Movement> movements, Piece piece, OrderStruct struct){
-        Cell from = piece.getCell();
         Cell to = new Cell(Char.get(struct.charOrder), Digit.get(struct.digitOrder));
         Optional<Piece> other = pieceController.byCell(to);
         if (!other.isPresent()) {
-            movements.add(new Movement(MOVE, to, from));
+            movements.add(new Movement(piece, to, MOVE));
             return true;
         } else {
             if (other.get().getColor() != piece.getColor()) {
-                movements.add(new Movement(KILL, to, from));
+                movements.add(new Movement(piece, to, KILL));
             }
             return false;
         }
