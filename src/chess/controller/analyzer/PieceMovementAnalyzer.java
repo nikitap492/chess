@@ -1,6 +1,5 @@
 package chess.controller.analyzer;
 
-import chess.controller.CheckmateController;
 import chess.controller.PieceController;
 import chess.domain.cell.Cell;
 import chess.domain.cell.Char;
@@ -23,11 +22,9 @@ import static chess.domain.movement.MovementType.MOVE;
 abstract class PieceMovementAnalyzer {
 
     private PieceController pieceController;
-    private CheckmateController checkmateController;
 
-    PieceMovementAnalyzer(PieceController pieceController, CheckmateController checkmateController) {
+    PieceMovementAnalyzer(PieceController pieceController) {
         this.pieceController = pieceController;
-        this.checkmateController = checkmateController;
     }
 
     abstract void addMovements(Set<Movement> empty, Piece piece);
@@ -41,7 +38,7 @@ abstract class PieceMovementAnalyzer {
 
     void crossBoardMovements(Set<Movement> movements, Piece piece, Function<OrderStruct, Boolean> direction){
 
-        OrderStruct struct = struct(piece);
+        OrderStruct struct = OrderStruct.of(piece);
         while (direction.apply(struct)) {
             boolean hasMoreMovements = addOneStepMovement(movements, piece, struct);
             if (!hasMoreMovements){
@@ -52,14 +49,14 @@ abstract class PieceMovementAnalyzer {
     }
 
     void addMovement(Set<Movement> movements, Piece piece, Function<OrderStruct, Boolean> direction){
-        OrderStruct struct = struct(piece);
+        OrderStruct struct = OrderStruct.of(piece);
         if(direction.apply(struct)){
             addOneStepMovement(movements, piece, struct);
         }
     }
 
     private boolean addOneStepMovement(Set<Movement> movements, Piece piece, OrderStruct struct){
-        Cell to = new Cell(Char.get(struct.charOrder), Digit.get(struct.digitOrder));
+        Cell to = byStruct(struct);
         Optional<Piece> other = pieceController.byCell(to);
         if (!other.isPresent()) {
             movements.add(new Movement(piece, to, MOVE));
@@ -72,13 +69,9 @@ abstract class PieceMovementAnalyzer {
         }
     }
 
-    private OrderStruct struct(Piece piece){
-        Cell from = piece.getCell();
-        int charOrder = from.getChar().getOrder();
-        int digitOrder = from.getDigit().getOrder();
-        return new OrderStruct(charOrder, digitOrder);
+    Cell byStruct(OrderStruct struct){
+        return Cell.of(Char.get(struct.charOrder), Digit.get(struct.digitOrder));
     }
-
 
 
 

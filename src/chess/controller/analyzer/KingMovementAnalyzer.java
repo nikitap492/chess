@@ -1,6 +1,5 @@
 package chess.controller.analyzer;
 
-import chess.controller.CheckmateController;
 import chess.controller.PieceController;
 import chess.domain.cell.Cell;
 import chess.domain.cell.Char;
@@ -22,8 +21,8 @@ class KingMovementAnalyzer extends PieceMovementAnalyzer {
 
     private final PieceController pieceController;
 
-    KingMovementAnalyzer(PieceController pieceController, CheckmateController checkmateController) {
-        super(pieceController, checkmateController);
+    KingMovementAnalyzer(PieceController pieceController) {
+        super(pieceController);
         this.pieceController = pieceController;
     }
 

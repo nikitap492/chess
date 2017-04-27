@@ -1,6 +1,5 @@
 package chess.controller.analyzer;
 
-import chess.controller.CheckmateController;
 import chess.controller.PieceController;
 import chess.domain.movement.Movement;
 import chess.domain.piece.Piece;
@@ -13,8 +12,8 @@ import java.util.Set;
  */
 class BishopMovementAnalyzer extends PieceMovementAnalyzer {
 
-    BishopMovementAnalyzer(PieceController pieceController, CheckmateController checkmateController) {
-        super(pieceController, checkmateController);
+    BishopMovementAnalyzer(PieceController pieceController) {
+        super(pieceController);
     }
 
     void addMovements(Set<Movement> movements, Piece piece){
