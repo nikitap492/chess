@@ -10,6 +10,6 @@ public interface TurnController {
 
     void nextTurn();
 
-    PieceColor whoseIsNext();
+    PieceColor whoseIsTurn();
 
 }

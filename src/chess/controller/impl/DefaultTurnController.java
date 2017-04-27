@@ -22,7 +22,7 @@ public class DefaultTurnController implements TurnController {
     }
 
     @Override
-    public PieceColor whoseIsNext() {
+    public PieceColor whoseIsTurn() {
         return color;
     }
 }
