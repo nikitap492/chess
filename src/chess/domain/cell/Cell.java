@@ -47,4 +47,8 @@ public class Cell {
         result = 31 * result + aChar.hashCode();
         return result;
     }
+
+    public static Cell of(Char aChar, Digit digit){
+        return new Cell(aChar, digit);
+    }
 }

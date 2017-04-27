@@ -12,11 +12,13 @@ public class Movement {
     private final Piece piece;
     private final MovementType type;
     private final Cell to;
+    private final Cell from;
 
     public Movement(Piece piece, Cell to, MovementType type) {
         this.type = type;
         this.to = to;
         this.piece = piece;
+        this.from = piece.getCell();
     }
 
     public MovementType getType() {
@@ -29,5 +31,9 @@ public class Movement {
 
     public Piece getPiece() {
         return piece;
+    }
+
+    public Cell getFrom() {
+        return from;
     }
 }

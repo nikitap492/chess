@@ -83,6 +83,7 @@ public class DefaultPieceController implements PieceController {
         pieceDisplay.remove(piece);
         pieces.remove(piece.getCell());
         piece.setCell(cell);
+        piece.setMoved(true);
         pieceDisplay.put(piece);
         pieces.put(cell, piece);
     }
@@ -149,6 +150,9 @@ public class DefaultPieceController implements PieceController {
                         break;
                     case CASTLING:
                         cellController.display(to, CASTLING);
+                        break;
+                    case EN_PASSANT:
+                        cellController.display(to, TREAT);
                         break;
                 }
             }

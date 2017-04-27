@@ -2,13 +2,14 @@ package chess.controller.analyzer;
 
 import chess.controller.*;
 import chess.domain.cell.Cell;
+import chess.domain.cell.Char;
 import chess.domain.cell.Digit;
 import chess.domain.movement.Movement;
 import chess.domain.piece.Piece;
 import chess.domain.piece.PieceType;
+import chess.repository.InMemoryMovementRepository;
+import chess.repository.MovementRepository;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -23,7 +24,7 @@ import static chess.domain.movement.MovementType.*;
  */
 public class MovementAnalyzer implements MovementController {
 
-    private List<Movement> movements;
+    private MovementRepository movements;
     private Set<Movement> possibleMovements;
     private Piece piece;
     private final BishopMovementAnalyzer bishopMovementAnalyzer;
@@ -39,16 +40,16 @@ public class MovementAnalyzer implements MovementController {
 
     public MovementAnalyzer(PieceController pieceController, CheckmateController checkmateController, TurnController turnController, CellController cellController) {
         this.cellController = cellController;
-        bishopMovementAnalyzer = new BishopMovementAnalyzer(pieceController, checkmateController);
-        rookMovementAnalyzer = new RookMovementAnalyzer(pieceController, checkmateController);
-        queenMovementAnalyzer = new QueenMovementAnalyzer(pieceController, checkmateController);
-        kingMovementAnalyzer = new KingMovementAnalyzer(pieceController, checkmateController);
-        pawnMovementAnalyzer = new PawnMovementAnalyser(pieceController, checkmateController);
-        knightMovementAnalyzer = new KnightMovementAnalyzer(pieceController, checkmateController);
+        this.movements = new InMemoryMovementRepository();
+        this.bishopMovementAnalyzer = new BishopMovementAnalyzer(pieceController);
+        this.rookMovementAnalyzer = new RookMovementAnalyzer(pieceController);
+        this.queenMovementAnalyzer = new QueenMovementAnalyzer(pieceController);
+        this.kingMovementAnalyzer = new KingMovementAnalyzer(pieceController);
+        this.pawnMovementAnalyzer = new PawnMovementAnalyser(pieceController, movements);
+        this.knightMovementAnalyzer = new KnightMovementAnalyzer(pieceController);
         this.pieceController = pieceController;
         this.turnController = turnController;
         this.checkmateController = checkmateController;
-        movements = new ArrayList<>();
     }
 
     @Override
@@ -96,6 +97,9 @@ public class MovementAnalyzer implements MovementController {
         if (movement.getType() == CASTLING){
             doCastling(movement);
         }
+        if (movement.getType() == EN_PASSANT){
+            killPawn(movement);
+        }
         pieceController.move(piece, movement.getTo());
         cellController.clear();
         turnController.nextTurn();
@@ -103,6 +107,13 @@ public class MovementAnalyzer implements MovementController {
         if (check){
             pieceController.check();
         }
+    }
+
+    private void killPawn(Movement movement) {
+        Char aChar = movement.getTo().getChar();
+        Digit digit = movement.getFrom().getDigit();
+        Piece pawn = pieceController.byCell(Cell.of(aChar, digit)).orElseThrow(RuntimeException::new);
+        pieceController.kill(pawn);
     }
 
     private void doCastling(Movement movement){
