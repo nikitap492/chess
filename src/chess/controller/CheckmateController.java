@@ -11,4 +11,6 @@ public interface CheckmateController {
     void setMovementController(MovementController movementController);
 
     boolean isNonCheck(Movement movement);
+
+    boolean isCheck();
 }

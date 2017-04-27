@@ -3,6 +3,7 @@ package chess.controller.analyzer;
 import chess.controller.CheckmateController;
 import chess.controller.MovementController;
 import chess.controller.PieceController;
+import chess.controller.TurnController;
 import chess.domain.cell.Cell;
 import chess.domain.movement.Movement;
 import chess.domain.movement.MovementType;
@@ -25,9 +26,11 @@ public class CheckmateAnalyzer implements CheckmateController {
 
     private final PieceController pieceController;
     private MovementController movementController;
+    private final TurnController turnController;
 
-    public CheckmateAnalyzer(PieceController pieceController) {
+    public CheckmateAnalyzer(PieceController pieceController, TurnController turnController) {
         this.pieceController = pieceController;
+        this.turnController = turnController;
     }
 
     @Override
@@ -63,6 +66,19 @@ public class CheckmateAnalyzer implements CheckmateController {
         }
 
         return !any.isPresent();
+    }
+
+    @Override
+    public boolean isCheck(){
+        PieceColor color = turnController.whoseIsTurn();
+        Optional<Movement> any = pieceController.pieces()
+                .values()
+                .stream()
+                .filter(n -> n.getColor() != color)
+                .flatMap(p -> movementController.all(p).stream())
+                .filter(this::isPossibleToKillTheKing)
+                .findAny();
+        return any.isPresent();
     }
 
 
