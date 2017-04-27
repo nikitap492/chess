@@ -5,6 +5,6 @@ package chess.domain.movement;
  * @since 20.04.2017.
  */
 public enum  MovementType {
-    CHECK, MOVE, KILL
+    MOVE, KILL, CASTLING
 
 }

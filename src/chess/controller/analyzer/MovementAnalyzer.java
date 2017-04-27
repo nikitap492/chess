@@ -1,10 +1,8 @@
 package chess.controller.analyzer;
 
-import chess.controller.CheckmateController;
-import chess.controller.MovementController;
-import chess.controller.PieceController;
-import chess.controller.TurnController;
+import chess.controller.*;
 import chess.domain.cell.Cell;
+import chess.domain.cell.Digit;
 import chess.domain.movement.Movement;
 import chess.domain.piece.Piece;
 import chess.domain.piece.PieceType;
@@ -15,8 +13,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static chess.domain.movement.MovementType.CHECK;
-import static chess.domain.movement.MovementType.KILL;
+import static chess.domain.cell.Char.*;
+import static chess.domain.movement.MovementType.*;
 
 
 /**
@@ -37,8 +35,10 @@ public class MovementAnalyzer implements MovementController {
     private final PieceController pieceController;
     private final TurnController turnController;
     private final CheckmateController checkmateController;
+    private final CellController cellController;
 
-    public MovementAnalyzer(PieceController pieceController, CheckmateController checkmateController, TurnController turnController) {
+    public MovementAnalyzer(PieceController pieceController, CheckmateController checkmateController, TurnController turnController, CellController cellController) {
+        this.cellController = cellController;
         bishopMovementAnalyzer = new BishopMovementAnalyzer(pieceController, checkmateController);
         rookMovementAnalyzer = new RookMovementAnalyzer(pieceController, checkmateController);
         queenMovementAnalyzer = new QueenMovementAnalyzer(pieceController, checkmateController);
@@ -90,14 +90,42 @@ public class MovementAnalyzer implements MovementController {
 
     private void doMove(Movement movement) {
         movements.add(movement);
-        if(movement.getType() == CHECK){
-            checkmateController.check();
-        }
         if (movement.getType() == KILL){
             pieceController.kill(piece);
         }
+        if (movement.getType() == CASTLING){
+            doCastling(movement);
+        }
         pieceController.move(piece, movement.getTo());
+        cellController.clear();
         turnController.nextTurn();
+        boolean check = checkmateController.isCheck();
+        if (check){
+            pieceController.check();
+        }
+    }
+
+    private void doCastling(Movement movement){
+        Cell cell = movement.getPiece().getCell();
+        Digit digit = cell.getDigit();
+        Piece rook;
+        Cell to = movement.getTo();
+        if (to.getChar() == C){
+            rook = pieceController.byCell(new Cell(A, digit))
+                    .orElseThrow(RuntimeException::new);
+            to = Cell.of(D, digit);
+        }else {
+            rook= pieceController.byCell(new Cell(H, digit))
+                    .orElseThrow(RuntimeException::new);
+            to = Cell.of(F, digit);
+        }
+        rookCastlingMovement(rook, to);
+
+    }
+
+    private void rookCastlingMovement(Piece rook, Cell to){
+        movements.add(new Movement(rook, to, MOVE));
+        pieceController.move(rook, to);
     }
 
 }

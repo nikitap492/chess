@@ -6,6 +6,6 @@ package chess.domain.cell;
  */
 public enum CellSelection {
 
-    TREAT, SELECT, CHECK, FREE
+    TREAT, SELECT, CHECK, FREE, CASTLING
 
 }
