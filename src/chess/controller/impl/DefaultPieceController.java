@@ -1,10 +1,7 @@
 package chess.controller.impl;
 
 import chess.command.Click;
-import chess.controller.CellController;
-import chess.controller.MovementController;
-import chess.controller.PieceController;
-import chess.controller.SelectController;
+import chess.controller.*;
 import chess.domain.cell.Cell;
 import chess.domain.cell.Char;
 import chess.domain.cell.Digit;
@@ -21,6 +18,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+import static chess.domain.cell.CellSelection.*;
 import static chess.domain.cell.Digit.*;
 import static chess.domain.piece.PieceType.*;
 
@@ -36,6 +34,7 @@ public class DefaultPieceController implements PieceController {
     private SelectController selectController;
 
     private Map<Cell, Piece> pieces;
+    private TurnController turnController;
 
 
     public DefaultPieceController(PieceDisplay pieceDisplay) {
@@ -72,6 +71,11 @@ public class DefaultPieceController implements PieceController {
     @Override
     public void setSelectController(SelectController selectController) {
         this.selectController = selectController;
+    }
+
+    @Override
+    public void setTurnController(TurnController turnController){
+        this.turnController = turnController;
     }
 
     @Override
@@ -113,6 +117,16 @@ public class DefaultPieceController implements PieceController {
     }
 
     @Override
+    public void check() {
+        PieceColor pieceColor = turnController.whoseIsTurn();
+        Piece king = pieces.values()
+                .stream()
+                .filter(p -> p.getColor() == pieceColor && p.getType() == KING)
+                .findAny().orElseThrow(RuntimeException::new);
+        cellController.display(king.getCell(), CHECK);
+    }
+
+    @Override
     public void update(Click<PieceView> t) {
         cellController.clear();
         Piece piece = t.target().piece();
@@ -120,21 +134,21 @@ public class DefaultPieceController implements PieceController {
         boolean isPossible = selectController.selectIsPossible(piece);
 
         if (isPossible) {
-            cellController.select(piece.getCell());
+            cellController.display(piece.getCell(), SELECT);
 
             Set<Movement> movements = movementController.possible(piece);
             for (Movement movement : movements) {
                 Cell to = movement.getTo();
                 MovementType type = movement.getType();
-                switch (type) {
-                    case CHECK:
-                        cellController.check(to);
-                        break;
+                switch (type){
                     case MOVE:
-                        cellController.free(to);
+                        cellController.display(to, FREE);
                         break;
                     case KILL:
-                        cellController.treat(to);
+                        cellController.display(to, TREAT);
+                        break;
+                    case CASTLING:
+                        cellController.display(to, CASTLING);
                         break;
                 }
             }

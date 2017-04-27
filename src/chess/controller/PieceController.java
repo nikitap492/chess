@@ -23,6 +23,8 @@ public interface PieceController extends Subscriber<PieceView> {
 
     void setSelectController(SelectController selectController);
 
+    void setTurnController(TurnController turnController);
+
     void move(Piece piece, Cell cell);
 
     void kill(Piece piece);
@@ -34,4 +36,6 @@ public interface PieceController extends Subscriber<PieceView> {
     Optional<Piece> byCell(Cell cell);
 
     Map<Cell, Piece> pieces();
+
+    void check();
 }
