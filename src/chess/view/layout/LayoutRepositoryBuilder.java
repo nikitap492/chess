@@ -3,6 +3,7 @@ package chess.view.layout;
 import chess.domain.cell.Cell;
 import chess.domain.cell.Char;
 import chess.domain.cell.Digit;
+import chess.repository.CellLayoutRepository;
 import chess.view.Dimension;
 import chess.view.Position;
 

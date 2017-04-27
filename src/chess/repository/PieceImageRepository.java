@@ -1,6 +1,7 @@
-package chess.view.image;
+package chess.repository;
 
 import chess.domain.piece.Piece;
+import chess.view.image.PieceImage;
 
 /**
  * Created by nikitap4.92@gmail.com

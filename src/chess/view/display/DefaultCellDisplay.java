@@ -1,10 +1,10 @@
 package chess.view.display;
 
 import chess.domain.cell.Cell;
+import chess.repository.CellImageRepository;
+import chess.repository.CellLayoutRepository;
 import chess.view.image.CellImage;
-import chess.view.image.CellImageRepository;
 import chess.view.layout.CellLayout;
-import chess.view.layout.CellLayoutRepository;
 
 /**
  * Created by nikitap4.92@gmail.com

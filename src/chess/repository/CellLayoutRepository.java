@@ -1,6 +1,7 @@
-package chess.view.layout;
+package chess.repository;
 
 import chess.domain.cell.Cell;
+import chess.view.layout.CellLayout;
 
 import java.util.Collection;
 
