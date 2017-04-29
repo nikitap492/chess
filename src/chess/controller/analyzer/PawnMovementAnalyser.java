@@ -4,7 +4,6 @@ import chess.controller.PieceController;
 import chess.domain.cell.Cell;
 import chess.domain.cell.Digit;
 import chess.domain.movement.Movement;
-import chess.domain.movement.MovementType;
 import chess.domain.piece.Piece;
 import chess.domain.piece.PieceColor;
 import chess.repository.MovementRepository;
@@ -14,7 +13,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 
-import static chess.domain.cell.Digit.*;
+import static chess.domain.cell.Digit.FIVE;
+import static chess.domain.cell.Digit.FOUR;
 import static chess.domain.movement.MovementType.*;
 import static chess.domain.piece.PieceColor.BLACK;
 import static chess.domain.piece.PieceColor.WHITE;
@@ -51,24 +51,16 @@ class PawnMovementAnalyser extends PieceMovementAnalyzer {
         int order = piece.getCell().getDigit().getOrder();
         switch (color) {
             case BLACK:
-                if (order == 1){
-                    return addStep(movements, piece, ONE, TRANSFORMATION);
-                }
-                if (order > 1) {
-                    Digit digit = Digit.get(--order);
-                    return addStep(movements, piece, digit, MOVE);
-                }
-
-                break;
+                if (order > 0) {
+                Digit digit = Digit.get(--order);
+                return addStep(movements, piece, digit);
+            }
+            break;
             case WHITE:
-                if (order == 6){
-                    return addStep(movements, piece, EIGHT, TRANSFORMATION);
-                }
-                if (order < 6) {
+                if (order < 7) {
                     Digit digit = Digit.get(++order);
-                    return addStep(movements, piece, digit, MOVE);
+                    return addStep(movements, piece, digit);
                 }
-                break;
         }
         return true;
     }
@@ -86,7 +78,7 @@ class PawnMovementAnalyser extends PieceMovementAnalyzer {
                     digit = FOUR;
                     break;
             }
-            addStep(movements, piece, digit, MOVE);
+            addStep(movements, piece, digit);
         }
     }
 
@@ -106,23 +98,14 @@ class PawnMovementAnalyser extends PieceMovementAnalyzer {
         }
         kills.stream()
                 .filter(m -> m.getType() == KILL)
-                .peek(this::changeKillToTransform)
                 .forEach(movements::add);
     }
 
-    private void changeKillToTransform(Movement movement){
-        Digit digit = movement.getTo().getDigit();
-        if (digit == ONE || digit == EIGHT){
-            movement.setType(TRANSFORMATION);
-        }
-
-    }
-
-    private boolean addStep(Set<Movement> movements, Piece piece, Digit digit, MovementType type) {
+    private boolean addStep(Set<Movement> movements, Piece piece, Digit digit) {
         Cell cell = Cell.of(piece.getCell().getChar(), digit);
         Optional<Piece> optional = pieceController.byCell(cell);
         if (!optional.isPresent()) {
-            movements.add(new Movement(piece, cell, type));
+            movements.add(new Movement(piece, cell, MOVE));
             return false;
         }
         return true;

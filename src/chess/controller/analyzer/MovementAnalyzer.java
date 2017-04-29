@@ -15,7 +15,10 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static chess.domain.cell.Char.*;
+import static chess.domain.cell.Digit.EIGHT;
+import static chess.domain.cell.Digit.ONE;
 import static chess.domain.movement.MovementType.*;
+import static chess.domain.piece.PieceType.PAWN;
 
 
 /**
@@ -102,17 +105,23 @@ public class MovementAnalyzer implements MovementController {
         if (movement.getType() == EN_PASSANT){
             killPawn(movement);
         }
-        if (movement.getType() == TRANSFORMATION){
+        Digit digit = movement.getTo().getDigit();
+        if (movement.getPiece().getType() == PAWN && (digit == ONE || digit == EIGHT)){
             PieceType pieceType = dialogController.transformDialog();
             pieceController.transform(piece, pieceType);
         }
+
         pieceController.move(piece, movement.getTo());
         cellController.clear();
         turnController.nextTurn();
         boolean check = checkmateController.isCheck();
         if (check){
             pieceController.check();
+            if (checkmateController.isCheckmate()){
+                dialogController.checkmate();
+            }
         }
+
     }
 
     private void killPawn(Movement movement) {
