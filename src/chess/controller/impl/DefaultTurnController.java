@@ -16,13 +16,19 @@ public class DefaultTurnController implements TurnController {
 
     @Override
     public void nextTurn() {
-        if(color == WHITE){
-            color = BLACK;
-        }else color = WHITE;
+       color = whoseIsNext();
     }
 
     @Override
     public PieceColor whoseIsTurn() {
         return color;
+    }
+
+
+    private PieceColor whoseIsNext() {
+        if(color == WHITE){
+            return BLACK;
+        }
+        return WHITE;
     }
 }

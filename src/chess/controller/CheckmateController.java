@@ -13,4 +13,6 @@ public interface CheckmateController {
     boolean isNonCheck(Movement movement);
 
     boolean isCheck();
+
+    boolean isCheckmate();
 }

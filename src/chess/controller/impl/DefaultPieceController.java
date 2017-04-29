@@ -3,7 +3,6 @@ package chess.controller.impl;
 import chess.command.Click;
 import chess.controller.*;
 import chess.domain.cell.Cell;
-import chess.domain.cell.CellSelection;
 import chess.domain.cell.Char;
 import chess.domain.cell.Digit;
 import chess.domain.movement.Movement;
@@ -155,20 +154,12 @@ public class DefaultPieceController implements PieceController {
                     case EN_PASSANT:
                         cellController.display(to, TREAT);
                         break;
-                    case TRANSFORMATION:
-                        CellSelection selection = transformSelection(to);
-                        cellController.display(to, selection);
-                        break;
                 }
             }
         }
         if (checkmateController.isCheck()){
             check();
         }
-    }
-
-    private CellSelection transformSelection(Cell cell) {
-        return pieces.get(cell) != null ? TREAT : FREE;
     }
 
     //For initialization
