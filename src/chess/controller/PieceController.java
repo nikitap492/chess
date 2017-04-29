@@ -21,7 +21,7 @@ public interface PieceController extends Subscriber<PieceView> {
 
     void setMovementController(MovementController movementController);
 
-    void setSelectController(SelectController selectController);
+    void setCheckmateController(CheckmateController checkmateController);
 
     void setTurnController(TurnController turnController);
 

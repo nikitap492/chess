@@ -3,6 +3,7 @@ package chess.controller.impl;
 import chess.command.Click;
 import chess.controller.*;
 import chess.domain.cell.Cell;
+import chess.domain.cell.CellSelection;
 import chess.domain.cell.Char;
 import chess.domain.cell.Digit;
 import chess.domain.movement.Movement;
@@ -31,10 +32,10 @@ public class DefaultPieceController implements PieceController {
     private PieceDisplay pieceDisplay;
     private CellController cellController;
     private MovementController movementController;
-    private SelectController selectController;
 
     private Map<Cell, Piece> pieces;
     private TurnController turnController;
+    private CheckmateController checkmateController;
 
 
     public DefaultPieceController(PieceDisplay pieceDisplay) {
@@ -69,8 +70,8 @@ public class DefaultPieceController implements PieceController {
     }
 
     @Override
-    public void setSelectController(SelectController selectController) {
-        this.selectController = selectController;
+    public void setCheckmateController(CheckmateController checkmateController) {
+        this.checkmateController = checkmateController;
     }
 
     @Override
@@ -132,9 +133,9 @@ public class DefaultPieceController implements PieceController {
         cellController.clear();
         Piece piece = t.target().piece();
 
-        boolean isPossible = selectController.selectIsPossible(piece);
+        boolean isSelectPossible = turnController.whoseIsTurn() == piece.getColor();
 
-        if (isPossible) {
+        if (isSelectPossible) {
             cellController.display(piece.getCell(), SELECT);
 
             Set<Movement> movements = movementController.possible(piece);
@@ -154,9 +155,20 @@ public class DefaultPieceController implements PieceController {
                     case EN_PASSANT:
                         cellController.display(to, TREAT);
                         break;
+                    case TRANSFORMATION:
+                        CellSelection selection = transformSelection(to);
+                        cellController.display(to, selection);
+                        break;
                 }
             }
         }
+        if (checkmateController.isCheck()){
+            check();
+        }
+    }
+
+    private CellSelection transformSelection(Cell cell) {
+        return pieces.get(cell) != null ? TREAT : FREE;
     }
 
     //For initialization

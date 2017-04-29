@@ -37,9 +37,11 @@ public class MovementAnalyzer implements MovementController {
     private final TurnController turnController;
     private final CheckmateController checkmateController;
     private final CellController cellController;
+    private final DialogController dialogController;
 
-    public MovementAnalyzer(PieceController pieceController, CheckmateController checkmateController, TurnController turnController, CellController cellController) {
+    public MovementAnalyzer(PieceController pieceController, CheckmateController checkmateController, TurnController turnController, CellController cellController, DialogController dialogController) {
         this.cellController = cellController;
+        this.dialogController = dialogController;
         this.movements = new InMemoryMovementRepository();
         this.bishopMovementAnalyzer = new BishopMovementAnalyzer(pieceController);
         this.rookMovementAnalyzer = new RookMovementAnalyzer(pieceController);
@@ -99,6 +101,10 @@ public class MovementAnalyzer implements MovementController {
         }
         if (movement.getType() == EN_PASSANT){
             killPawn(movement);
+        }
+        if (movement.getType() == TRANSFORMATION){
+            PieceType pieceType = dialogController.transformDialog();
+            pieceController.transform(piece, pieceType);
         }
         pieceController.move(piece, movement.getTo());
         cellController.clear();
