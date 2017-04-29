@@ -10,7 +10,7 @@ import chess.domain.piece.Piece;
 public class Movement {
 
     private final Piece piece;
-    private final MovementType type;
+    private MovementType type;
     private final Cell to;
     private final Cell from;
 
@@ -19,6 +19,10 @@ public class Movement {
         this.to = to;
         this.piece = piece;
         this.from = piece.getCell();
+    }
+
+    public void setType(MovementType type) {
+        this.type = type;
     }
 
     public MovementType getType() {
