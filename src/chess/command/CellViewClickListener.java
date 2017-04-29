@@ -10,7 +10,7 @@ import java.util.List;
  * 22.04.17.
  */
 public class CellViewClickListener implements ClickListener<CellView> {
-    private List<Subscriber<CellView>> subscribers = new ArrayList<>();
+    private List<ClickSubscriber<CellView>> subscribers = new ArrayList<>();
 
     @Override
     public void click(Click<CellView> click) {
@@ -18,7 +18,7 @@ public class CellViewClickListener implements ClickListener<CellView> {
     }
 
     @Override
-    public void addSubscriber(Subscriber<CellView> subscriber) {
+    public void addSubscriber(ClickSubscriber<CellView> subscriber) {
         subscribers.add(subscriber);
     }
 }

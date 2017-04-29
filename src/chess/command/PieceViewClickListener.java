@@ -11,7 +11,7 @@ import java.util.List;
  */
 public class PieceViewClickListener implements ClickListener<PieceView> {
 
-    private List<Subscriber<PieceView>> subscribers = new ArrayList<>();
+    private List<ClickSubscriber<PieceView>> subscribers = new ArrayList<>();
 
     @Override
     public void click(Click<PieceView> click) {
@@ -19,7 +19,7 @@ public class PieceViewClickListener implements ClickListener<PieceView> {
     }
 
     @Override
-    public void addSubscriber(Subscriber<PieceView> subscriber) {
+    public void addSubscriber(ClickSubscriber<PieceView> subscriber) {
         subscribers.add(subscriber);
     }
 

@@ -1,6 +1,6 @@
 package chess.controller;
 
-import chess.command.Subscriber;
+import chess.command.ClickSubscriber;
 import chess.domain.cell.Cell;
 import chess.domain.piece.Piece;
 import chess.domain.piece.PieceType;
@@ -13,7 +13,7 @@ import java.util.Optional;
  * @author Poshivalov Nikita
  * @since 20.04.2017.
  */
-public interface PieceController extends Subscriber<PieceView> {
+public interface PieceController extends ClickSubscriber<PieceView> {
 
     void arrangePieces();
 

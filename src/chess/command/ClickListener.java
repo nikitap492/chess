@@ -8,6 +8,6 @@ public interface ClickListener<T extends Clickable> {
 
     void click(Click<T> click);
 
-    void addSubscriber(Subscriber<T> subscriber);
+    void addSubscriber(ClickSubscriber<T> subscriber);
 
 }
