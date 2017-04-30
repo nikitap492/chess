@@ -4,6 +4,7 @@ import chess.domain.movement.Movement;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
+import java.util.Optional;
 
 /**
  * Created by nikitap4.92@gmail.com
@@ -24,8 +25,9 @@ public class InMemoryMovementRepository implements MovementRepository{
     }
 
     @Override
-    public Movement undo() {
-        return deque.removeLast();
+    public Optional<Movement> undo() {
+        if (!deque.isEmpty()) return Optional.of(deque.removeLast());
+        else return Optional.empty();
     }
 
     @Override

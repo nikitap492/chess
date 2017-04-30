@@ -17,5 +17,5 @@ public interface CellLayoutRepository {
 
     Collection<CellLayout> all();
 
-
+    void clearPieces();
 }
