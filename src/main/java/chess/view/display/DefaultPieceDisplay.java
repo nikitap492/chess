@@ -32,4 +32,9 @@ public class DefaultPieceDisplay implements PieceDisplay {
         CellLayout container = layoutRepository.get(piece.getCell());
         container.clearPieceImage();
     }
+
+    @Override
+    public void clear() {
+        layoutRepository.clearPieces();
+    }
 }

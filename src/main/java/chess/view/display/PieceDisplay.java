@@ -12,4 +12,5 @@ public interface PieceDisplay {
 
     void remove(Piece piece);
 
+    void clear();
 }

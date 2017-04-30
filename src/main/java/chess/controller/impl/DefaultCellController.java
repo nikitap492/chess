@@ -12,11 +12,11 @@ import chess.view.display.CellDisplay;
  * Created by nikitap4.92@gmail.com
  * 21.04.17.
  */
-public class DefaultCellController implements CellController {
+class DefaultCellController implements CellController {
     private CellDisplay cellDisplay;
     private MovementController movementController;
 
-    public DefaultCellController(CellDisplay cellDisplay) {
+    DefaultCellController(CellDisplay cellDisplay) {
         this.cellDisplay = cellDisplay;
     }
 

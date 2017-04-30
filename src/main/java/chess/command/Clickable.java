@@ -5,4 +5,6 @@ package chess.command;
  * 21.04.17.
  */
 public interface Clickable {
+
+    void onClick();
 }

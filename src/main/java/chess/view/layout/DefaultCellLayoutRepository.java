@@ -29,4 +29,9 @@ class DefaultCellLayoutRepository implements CellLayoutRepository {
     public Collection<CellLayout> all() {
         return cellLayoutMap.values();
     }
+
+    @Override
+    public void clearPieces() {
+        cellLayoutMap.values().forEach(CellLayout::clearPieceImage);
+    }
 }

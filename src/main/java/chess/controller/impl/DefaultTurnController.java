@@ -10,7 +10,7 @@ import static chess.domain.piece.PieceColor.WHITE;
  * Created by nikitap4.92@gmail.com
  * 22.04.17.
  */
-public class DefaultTurnController implements TurnController {
+class DefaultTurnController implements TurnController {
 
     private PieceColor color = WHITE;
 
