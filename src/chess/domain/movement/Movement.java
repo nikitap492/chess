@@ -3,6 +3,8 @@ package chess.domain.movement;
 import chess.domain.cell.Cell;
 import chess.domain.piece.Piece;
 
+import java.util.Optional;
+
 /**
  * @author Poshivalov Nikita
  * @since 20.04.2017.
@@ -13,6 +15,7 @@ public class Movement {
     private MovementType type;
     private final Cell to;
     private final Cell from;
+    private Piece killed;
 
     public Movement(Piece piece, Cell to, MovementType type) {
         this.type = type;
@@ -39,5 +42,13 @@ public class Movement {
 
     public Cell getFrom() {
         return from;
+    }
+
+    public Optional<Piece> getKilled() {
+        return Optional.ofNullable(killed);
+    }
+
+    public void setKilled(Piece killed) {
+        this.killed = killed;
     }
 }

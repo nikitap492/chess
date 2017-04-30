@@ -94,10 +94,33 @@ public class MovementAnalyzer implements MovementController {
         any.ifPresent(this::doMove);
     }
 
+    @Override
+    public void undo() {
+        Optional<Movement> undo = movements.undo();
+        undo.ifPresent(last-> {
+            pieceController.move(last.getPiece(), last.getFrom());
+            cellController.clear();
+            turnController.nextTurn();
+            Optional<Piece> killed = last.getKilled();
+            killed.ifPresent(pieceController::create);
+        });
+
+        boolean check = checkmateController.isCheck();
+        if (check){
+            pieceController.check();
+        }
+    }
+
+    @Override
+    public void clear() {
+        movements.clear();
+    }
+
     private void doMove(Movement movement) {
         movements.add(movement);
         if (movement.getType() == KILL){
             pieceController.kill(piece);
+            movement.setKilled(pieceController.byCell(movement.getTo()).orElseThrow(RuntimeException::new));
         }
         if (movement.getType() == CASTLING){
             doCastling(movement);

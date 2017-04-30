@@ -23,8 +23,6 @@ public interface PieceController extends ClickSubscriber<PieceView> {
 
     void setCheckmateController(CheckmateController checkmateController);
 
-    void setTurnController(TurnController turnController);
-
     void move(Piece piece, Cell cell);
 
     void kill(Piece piece);

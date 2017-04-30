@@ -18,4 +18,7 @@ public interface MovementController {
 
     void moveToCell(Cell cell);
 
+    void undo();
+
+    void clear();
 }

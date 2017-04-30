@@ -8,8 +8,13 @@ import chess.domain.piece.PieceType;
  */
 public interface DialogController {
 
+    void setGameController(GameController gameController);
+
     PieceType transformDialog();
 
     void checkmate();
 
+    void exit();
+
+    void newGame();
 }

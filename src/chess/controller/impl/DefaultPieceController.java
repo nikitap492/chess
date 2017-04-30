@@ -26,23 +26,25 @@ import static chess.domain.piece.PieceType.*;
  * Created by nikitap4.92@gmail.com
  * 21.04.17.
  */
-public class DefaultPieceController implements PieceController {
+class DefaultPieceController implements PieceController {
 
     private PieceDisplay pieceDisplay;
     private CellController cellController;
     private MovementController movementController;
 
     private Map<Cell, Piece> pieces;
-    private TurnController turnController;
+    private final TurnController turnController;
     private CheckmateController checkmateController;
 
 
-    public DefaultPieceController(PieceDisplay pieceDisplay) {
+    DefaultPieceController(PieceDisplay pieceDisplay, TurnController turnController) {
         this.pieceDisplay = pieceDisplay;
+        this.turnController = turnController;
     }
 
     @Override
     public void arrangePieces() {
+        pieceDisplay.clear();
         pieces = new HashMap<>();
         for (Char c : Char.values()) {
             for (Digit d : Digit.values()) {
@@ -74,11 +76,6 @@ public class DefaultPieceController implements PieceController {
     }
 
     @Override
-    public void setTurnController(TurnController turnController){
-        this.turnController = turnController;
-    }
-
-    @Override
     public void move(Piece piece, Cell cell) {
         pieceDisplay.remove(piece);
         pieces.remove(piece.getCell());
@@ -90,7 +87,6 @@ public class DefaultPieceController implements PieceController {
 
     @Override
     public void kill(Piece piece) {
-        piece.setAlive(false);
         pieceDisplay.remove(piece);
         pieces.remove(piece.getCell());
     }
