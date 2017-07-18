@@ -17,4 +17,6 @@ public interface DialogController {
     void exit();
 
     void newGame();
+
+    void draw();
 }

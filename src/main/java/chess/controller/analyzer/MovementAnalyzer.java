@@ -144,6 +144,10 @@ public class MovementAnalyzer implements MovementController {
                 dialogController.checkmate();
             }
         }
+        boolean draw = checkmateController.isDraw();
+        if(draw){
+            dialogController.draw();
+        }
 
     }
 

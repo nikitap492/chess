@@ -74,6 +74,19 @@ public class CheckmateAnalyzer implements CheckmateController {
         return !hasMovementToSave().isPresent();
     }
 
+    @Override
+    public boolean isDraw() {
+        return !hasAnyMovements();
+    }
+
+    private boolean hasAnyMovements() {
+        return pieceController.pieces().values().stream()
+                .filter(this::nextTurnColor)
+                .flatMap(piece -> movementController.possible(piece).stream())
+                .findFirst()
+                .isPresent();
+    }
+
 
     private boolean isPossibleToKillTheKing(Movement movement) {
         MovementType type = movement.getType();
@@ -81,17 +94,11 @@ public class CheckmateAnalyzer implements CheckmateController {
             return false;
         }
         Optional<Piece> piece = pieceController.byCell(movement.getTo());
-        if (piece.isPresent()) {
-            PieceType pieceType = piece.get().getType();
-            if (pieceType == KING) return true;
-        }
-        return false;
+        return piece.isPresent() && piece.get().getType() == KING;
     }
 
     private Optional<Movement> hasMovementsToKill(){
-        return pieceController.pieces()
-                .values()
-                .stream()
+        return pieceController.pieces().values().stream()
                 .filter(this::nextTurnColor)
                 .flatMap(this::pieceMovements)
                 .filter(this::isPossibleToKillTheKing)
@@ -99,9 +106,7 @@ public class CheckmateAnalyzer implements CheckmateController {
     }
 
     private Optional<Movement> hasMovementToSave(){
-        return new HashMap<>(pieceController.pieces())
-                .values()
-                .stream()
+        return new HashMap<>(pieceController.pieces()).values().stream()
                 .filter(p -> p.getColor() == turnController.whoseIsTurn())
                 .flatMap(this::pieceMovements)
                 .filter(this::isNonCheck)
