@@ -9,6 +9,7 @@ import chess.domain.GameResult;
 import chess.repository.CellImageRepository;
 import chess.repository.CellLayoutRepository;
 import chess.repository.PieceImageRepository;
+import chess.repository.PieceRepository;
 import chess.view.display.CellDisplay;
 import chess.view.display.DefaultCellDisplay;
 import chess.view.display.DefaultPieceDisplay;
@@ -75,8 +76,7 @@ public class GameBuilder {
             PieceDisplay pieceDisplay = new DefaultPieceDisplay(pieceImageRepository, cellLayoutRepository);
 
             this.turnController = new DefaultTurnController();
-
-            this.pieceController = new DefaultPieceController(pieceDisplay, turnController);
+            this.pieceController =  new DefaultPieceController(pieceDisplay, turnController);
 
             pieceViewClickListener.addSubscriber(pieceController);
 

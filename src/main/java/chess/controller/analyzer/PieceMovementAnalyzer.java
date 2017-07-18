@@ -6,6 +6,7 @@ import chess.domain.cell.Char;
 import chess.domain.cell.Digit;
 import chess.domain.movement.Movement;
 import chess.domain.piece.Piece;
+import chess.repository.PieceRepository;
 
 import java.util.HashSet;
 import java.util.Optional;
@@ -21,10 +22,10 @@ import static chess.domain.movement.MovementType.MOVE;
  */
 abstract class PieceMovementAnalyzer {
 
-    private PieceController pieceController;
+    private PieceRepository pieceRepository;
 
-    PieceMovementAnalyzer(PieceController pieceController) {
-        this.pieceController = pieceController;
+    PieceMovementAnalyzer(PieceRepository pieceRepository) {
+        this.pieceRepository = pieceRepository;
     }
 
     abstract void addMovements(Set<Movement> empty, Piece piece);
@@ -57,7 +58,7 @@ abstract class PieceMovementAnalyzer {
 
     private boolean addOneStepMovement(Set<Movement> movements, Piece piece, OrderStruct struct){
         Cell to = byStruct(struct);
-        Optional<Piece> other = pieceController.byCell(to);
+        Optional<Piece> other = pieceRepository.byCell(to);
         if (!other.isPresent()) {
             movements.add(new Movement(piece, to, MOVE));
             return true;

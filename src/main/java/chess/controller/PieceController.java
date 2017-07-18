@@ -4,6 +4,7 @@ import chess.command.ClickSubscriber;
 import chess.domain.cell.Cell;
 import chess.domain.piece.Piece;
 import chess.domain.piece.PieceType;
+import chess.repository.PieceRepository;
 import chess.view.PieceView;
 
 import java.util.Map;
@@ -14,8 +15,6 @@ import java.util.Optional;
  * @since 20.04.2017.
  */
 public interface PieceController extends ClickSubscriber<PieceView> {
-
-    void arrangePieces();
 
     void setCellController(CellController cellController);
 
@@ -31,9 +30,9 @@ public interface PieceController extends ClickSubscriber<PieceView> {
 
     void transform(Piece piece, PieceType pieceType);
 
-    Optional<Piece> byCell(Cell cell);
-
-    Map<Cell, Piece> pieces();
-
     void check();
+
+    void arrangePieces();
+
+    PieceRepository repository();
 }

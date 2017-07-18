@@ -7,6 +7,7 @@ import chess.domain.movement.Movement;
 import chess.domain.piece.Piece;
 import chess.domain.piece.PieceColor;
 import chess.repository.MovementRepository;
+import chess.repository.PieceRepository;
 
 import java.util.HashSet;
 import java.util.Optional;
@@ -27,12 +28,12 @@ import static chess.domain.piece.PieceType.PAWN;
 class PawnMovementAnalyser extends PieceMovementAnalyzer {
 
 
-    private final PieceController pieceController;
+    private final PieceRepository pieceRepository;
     private final MovementRepository repository;
 
-    PawnMovementAnalyser(PieceController pieceController, MovementRepository repository) {
-        super(pieceController);
-        this.pieceController = pieceController;
+    PawnMovementAnalyser(PieceRepository pieceRepository, MovementRepository repository) {
+        super(pieceRepository);
+        this.pieceRepository = pieceRepository;
         this.repository = repository;
     }
 
@@ -103,7 +104,7 @@ class PawnMovementAnalyser extends PieceMovementAnalyzer {
 
     private boolean addStep(Set<Movement> movements, Piece piece, Digit digit) {
         Cell cell = Cell.of(piece.getCell().getChar(), digit);
-        Optional<Piece> optional = pieceController.byCell(cell);
+        Optional<Piece> optional = pieceRepository.byCell(cell);
         if (!optional.isPresent()) {
             movements.add(new Movement(piece, cell, MOVE));
             return false;
@@ -143,7 +144,7 @@ class PawnMovementAnalyser extends PieceMovementAnalyzer {
         Optional<Piece> other = Optional.empty();
         if (direction.apply(struct)) {
             Cell c = byStruct(struct);
-            other = pieceController.byCell(c);
+            other = pieceRepository.byCell(c);
         }
         return other;
     }

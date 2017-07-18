@@ -10,6 +10,8 @@ import chess.domain.movement.MovementType;
 import chess.domain.piece.Piece;
 import chess.domain.piece.PieceColor;
 import chess.domain.piece.PieceType;
+import chess.repository.InMemoryPieceRepository;
+import chess.repository.PieceRepository;
 import chess.view.PieceView;
 import chess.view.display.PieceDisplay;
 
@@ -26,13 +28,13 @@ import static chess.domain.piece.PieceType.*;
  * Created by nikitap4.92@gmail.com
  * 21.04.17.
  */
-class DefaultPieceController implements PieceController {
+class DefaultPieceController implements PieceController{
 
     private PieceDisplay pieceDisplay;
+    private final PieceRepository pieceRepository = new InMemoryPieceRepository();
     private CellController cellController;
     private MovementController movementController;
 
-    private Map<Cell, Piece> pieces;
     private final TurnController turnController;
     private CheckmateController checkmateController;
 
@@ -46,7 +48,6 @@ class DefaultPieceController implements PieceController {
     public void arrangePieces() {
         cellController.clear();
         pieceDisplay.clear();
-        pieces = new HashMap<>();
         for (Char c : Char.values()) {
             for (Digit d : Digit.values()) {
                 Cell cell = new Cell(c, d);
@@ -79,23 +80,20 @@ class DefaultPieceController implements PieceController {
     @Override
     public void move(Piece piece, Cell cell) {
         pieceDisplay.remove(piece);
-        pieces.remove(piece.getCell());
-        piece.setCell(cell);
-        piece.setMoved(true);
+        pieceRepository.replace(piece, cell);
         pieceDisplay.put(piece);
-        pieces.put(cell, piece);
     }
 
     @Override
     public void kill(Piece piece) {
         pieceDisplay.remove(piece);
-        pieces.remove(piece.getCell());
+        pieceRepository.remove(piece);
     }
 
     @Override
     public void create(Piece piece) {
         pieceDisplay.put(piece);
-        pieces.put(piece.getCell(), piece);
+        pieceRepository.create(piece);
     }
 
     @Override
@@ -104,20 +102,11 @@ class DefaultPieceController implements PieceController {
         pieceDisplay.put(piece);
     }
 
-    @Override
-    public Optional<Piece> byCell(Cell cell) {
-        return Optional.ofNullable(pieces.get(cell));
-    }
-
-    @Override
-    public Map<Cell, Piece> pieces() {
-        return pieces;
-    }
 
     @Override
     public void check() {
         PieceColor pieceColor = turnController.whoseIsTurn();
-        Piece king = pieces.values()
+        Piece king = pieceRepository.pieces().values()
                 .stream()
                 .filter(p -> p.getColor() == pieceColor && p.getType() == KING)
                 .findAny().orElseThrow(RuntimeException::new);
@@ -125,13 +114,16 @@ class DefaultPieceController implements PieceController {
     }
 
     @Override
+    public PieceRepository repository() {
+        return pieceRepository;
+    }
+
+    @Override
     public void update(Click<PieceView> t) {
         cellController.clear();
         Piece piece = t.target().piece();
 
-        boolean isSelectPossible = turnController.whoseIsTurn() == piece.getColor();
-
-        if (isSelectPossible) {
+        if (turnController.whoseIsTurn() == piece.getColor()) {
             cellController.display(piece.getCell(), SELECT);
 
             Set<Movement> movements = movementController.possible(piece);

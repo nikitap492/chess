@@ -7,6 +7,7 @@ import chess.domain.movement.Movement;
 import chess.domain.movement.MovementType;
 import chess.domain.piece.Piece;
 import chess.domain.piece.PieceColor;
+import chess.repository.PieceRepository;
 
 import java.util.HashMap;
 import java.util.List;
@@ -25,15 +26,17 @@ import static java.util.stream.Collectors.*;
 public class CheckmateAnalyzer implements CheckmateController {
 
 
+    private final PieceRepository pieceRepository;
     private final PieceController pieceController;
     private MovementController movementController;
     private final TurnController turnController;
     private final GameController gameController;
 
     public CheckmateAnalyzer(PieceController pieceController, TurnController turnController, GameController gameController) {
-        this.pieceController = pieceController;
+        this.pieceRepository = pieceController.repository();
         this.turnController = turnController;
         this.gameController = gameController;
+        this.pieceController = pieceController;
     }
 
     @Override
@@ -44,7 +47,7 @@ public class CheckmateAnalyzer implements CheckmateController {
     @Override
     public boolean isNonCheck(Movement movement) {
         Piece piece = movement.getPiece();
-        Map<Cell, Piece> pieces = pieceController.pieces();
+        Map<Cell, Piece> pieces = pieceRepository.pieces();
 
         Piece target = pieces.get(movement.getTo());
 
@@ -95,7 +98,7 @@ public class CheckmateAnalyzer implements CheckmateController {
     }
 
     private boolean hasAnyMovements() {
-        List<Movement> movements = pieceController.pieces().values().stream()
+        List<Movement> movements = pieceRepository.pieces().values().stream()
                 .filter(this::currentTurnColor)
                 .flatMap(piece -> movementController.all(piece).stream())
                 .collect(toList());
@@ -108,12 +111,12 @@ public class CheckmateAnalyzer implements CheckmateController {
         if (type != KILL) {
             return false;
         }
-        Optional<Piece> piece = pieceController.byCell(movement.getTo());
+        Optional<Piece> piece = pieceRepository.byCell(movement.getTo());
         return piece.isPresent() && piece.get().getType() == KING;
     }
 
     private Optional<Movement> hasMovementsToKill() {
-        return pieceController.pieces().values().stream()
+        return pieceRepository.pieces().values().stream()
                 .filter(this::nextTurnColor)
                 .flatMap(this::pieceMovements)
                 .filter(this::isPossibleToKillTheKing)
@@ -121,7 +124,7 @@ public class CheckmateAnalyzer implements CheckmateController {
     }
 
     private Optional<Movement> hasMovementToSave() {
-        return new HashMap<>(pieceController.pieces()).values().stream()
+        return new HashMap<>(pieceRepository.pieces()).values().stream()
                 .filter(this::currentTurnColor)
                 .flatMap(this::pieceMovements)
                 .filter(this::isNonCheck)
