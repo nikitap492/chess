@@ -44,6 +44,7 @@ class DefaultPieceController implements PieceController {
 
     @Override
     public void arrangePieces() {
+        cellController.clear();
         pieceDisplay.clear();
         pieces = new HashMap<>();
         for (Char c : Char.values()) {

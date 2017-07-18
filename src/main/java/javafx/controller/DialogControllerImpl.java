@@ -74,6 +74,11 @@ public class DialogControllerImpl implements DialogController {
         newGameDialog("New Game");
     }
 
+    @Override
+    public void draw() {
+        newGameDialog("Draw");
+    }
+
 
     private void newGameDialog(String title){
         Alert newGame = new Alert(Alert.AlertType.CONFIRMATION);
