@@ -118,37 +118,32 @@ public class MovementAnalyzer implements MovementController {
 
     private void doMove(Movement movement) {
         movements.add(movement);
-        if (movement.getType() == KILL){
-            pieceController.kill(piece);
-            movement.setKilled(pieceController.byCell(movement.getTo()).orElseThrow(RuntimeException::new));
+        switch (movement.getType()){
+            case KILL:
+                pieceController.kill(piece);
+                movement.setKilled(pieceController.byCell(movement.getTo()).orElseThrow(RuntimeException::new));
+                break;
+            case CASTLING:
+                doCastling(movement);
+                break;
+            case EN_PASSANT:
+                killPawn(movement);
+                break;
         }
-        if (movement.getType() == CASTLING){
-            doCastling(movement);
-        }
-        if (movement.getType() == EN_PASSANT){
-            killPawn(movement);
-        }
+
+       checkTransformForPawn(movement);
+
+        pieceController.move(piece, movement.getTo());
+        cellController.clear();
+        turnController.nextTurn();
+    }
+
+    private void checkTransformForPawn(Movement movement){
         Digit digit = movement.getTo().getDigit();
         if (movement.getPiece().getType() == PAWN && (digit == ONE || digit == EIGHT)){
             PieceType pieceType = dialogController.transformDialog();
             pieceController.transform(piece, pieceType);
         }
-
-        pieceController.move(piece, movement.getTo());
-        cellController.clear();
-        turnController.nextTurn();
-        boolean check = checkmateController.isCheck();
-        if (check){
-            pieceController.check();
-            if (checkmateController.isCheckmate()){
-                dialogController.checkmate();
-            }
-        }
-        boolean draw = checkmateController.isDraw();
-        if(draw){
-            dialogController.draw();
-        }
-
     }
 
     private void killPawn(Movement movement) {

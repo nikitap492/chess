@@ -1,21 +1,17 @@
 package chess.controller.analyzer;
 
-import chess.controller.CheckmateController;
-import chess.controller.MovementController;
-import chess.controller.PieceController;
-import chess.controller.TurnController;
+import chess.controller.*;
+import chess.domain.GameResult;
 import chess.domain.cell.Cell;
 import chess.domain.movement.Movement;
 import chess.domain.movement.MovementType;
 import chess.domain.piece.Piece;
-import chess.domain.piece.PieceType;
+import chess.domain.piece.PieceColor;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static chess.domain.movement.MovementType.KILL;
@@ -32,10 +28,12 @@ public class CheckmateAnalyzer implements CheckmateController {
     private final PieceController pieceController;
     private MovementController movementController;
     private final TurnController turnController;
+    private final GameController gameController;
 
-    public CheckmateAnalyzer(PieceController pieceController, TurnController turnController) {
+    public CheckmateAnalyzer(PieceController pieceController, TurnController turnController, GameController gameController) {
         this.pieceController = pieceController;
         this.turnController = turnController;
+        this.gameController = gameController;
     }
 
     @Override
@@ -61,7 +59,7 @@ public class CheckmateAnalyzer implements CheckmateController {
 
         pieces.remove(copy.getCell());
         pieces.put(piece.getCell(), piece);
-        if(target != null){
+        if (target != null) {
             pieces.put(target.getCell(), target);
         }
 
@@ -69,17 +67,30 @@ public class CheckmateAnalyzer implements CheckmateController {
     }
 
     @Override
-    public boolean isCheck(){
+    public boolean isCheck() {
         return hasMovementsToKill().isPresent();
     }
 
     @Override
-    public boolean isCheckmate() {
+    public void analyze() {
+        if (isCheck()) {
+            pieceController.check();
+            if (isCheckmate()) {
+                if (turnController.whoseIsTurn() == PieceColor.WHITE)
+                    gameController.over(GameResult.BLACK_WON);
+                else gameController.over(GameResult.WHITE_WON);
+            }
+        }else if (isDraw()) {
+            gameController.over(GameResult.DRAW);
+        }
+    }
+
+    private boolean isCheckmate() {
         return !hasMovementToSave().isPresent();
     }
 
-    @Override
-    public boolean isDraw() {
+
+    private boolean isDraw() {
         return !hasAnyMovements();
     }
 
@@ -92,7 +103,6 @@ public class CheckmateAnalyzer implements CheckmateController {
     }
 
 
-
     private boolean isPossibleToKillTheKing(Movement movement) {
         MovementType type = movement.getType();
         if (type != KILL) {
@@ -102,7 +112,7 @@ public class CheckmateAnalyzer implements CheckmateController {
         return piece.isPresent() && piece.get().getType() == KING;
     }
 
-    private Optional<Movement> hasMovementsToKill(){
+    private Optional<Movement> hasMovementsToKill() {
         return pieceController.pieces().values().stream()
                 .filter(this::nextTurnColor)
                 .flatMap(this::pieceMovements)
@@ -110,7 +120,7 @@ public class CheckmateAnalyzer implements CheckmateController {
                 .findAny();
     }
 
-    private Optional<Movement> hasMovementToSave(){
+    private Optional<Movement> hasMovementToSave() {
         return new HashMap<>(pieceController.pieces()).values().stream()
                 .filter(this::currentTurnColor)
                 .flatMap(this::pieceMovements)
@@ -123,11 +133,11 @@ public class CheckmateAnalyzer implements CheckmateController {
     }
 
 
-    private boolean nextTurnColor(Piece piece){
+    private boolean nextTurnColor(Piece piece) {
         return turnController.whoseIsTurn() != piece.getColor();
     }
 
-    private Stream<Movement> pieceMovements(Piece piece){
+    private Stream<Movement> pieceMovements(Piece piece) {
         return movementController.all(piece).stream();
     }
 

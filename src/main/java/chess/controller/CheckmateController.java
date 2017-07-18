@@ -14,7 +14,5 @@ public interface CheckmateController {
 
     boolean isCheck();
 
-    boolean isCheckmate();
-
-    boolean isDraw();
+    void analyze();
 }

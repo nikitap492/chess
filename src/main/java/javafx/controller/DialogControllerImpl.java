@@ -50,8 +50,8 @@ public class DialogControllerImpl implements DialogController {
     }
 
     @Override
-    public void checkmate() {
-        newGameDialog("Checkmate");
+    public void gameOver(String title) {
+        newGameDialog(title);
     }
 
     @Override
@@ -74,10 +74,7 @@ public class DialogControllerImpl implements DialogController {
         newGameDialog("New Game");
     }
 
-    @Override
-    public void draw() {
-        newGameDialog("Draw");
-    }
+
 
 
     private void newGameDialog(String title){

@@ -12,11 +12,9 @@ public interface DialogController {
 
     PieceType transformDialog();
 
-    void checkmate();
-
     void exit();
 
     void newGame();
 
-    void draw();
+    void gameOver(String title);
 }

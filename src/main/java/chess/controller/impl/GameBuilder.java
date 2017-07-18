@@ -5,6 +5,7 @@ import chess.command.PieceViewClickListener;
 import chess.controller.*;
 import chess.controller.analyzer.CheckmateAnalyzer;
 import chess.controller.analyzer.MovementAnalyzer;
+import chess.domain.GameResult;
 import chess.repository.CellImageRepository;
 import chess.repository.CellLayoutRepository;
 import chess.repository.PieceImageRepository;
@@ -85,14 +86,14 @@ public class GameBuilder {
 
             cellViewClickListener.addSubscriber(cellController);
 
-            CheckmateController checkmateController = new CheckmateAnalyzer(pieceController, turnController);
+            CheckmateController checkmateController = new CheckmateAnalyzer(pieceController, turnController, this);
             this.movementController = new MovementAnalyzer(pieceController, checkmateController, turnController, cellController, dialogController);
             checkmateController.setMovementController(movementController);
 
             cellController.setMovementController(movementController);
             pieceController.setMovementController(movementController);
             pieceController.setCheckmateController(checkmateController);
-
+            turnController.setCheckmateController(checkmateController);
         }
 
         @Override
@@ -112,6 +113,21 @@ public class GameBuilder {
         @Override
         public void undo() {
             movementController.undo();
+        }
+
+        @Override
+        public void over(GameResult result) {
+            switch (result){
+                case DRAW:
+                    dialogController.gameOver("Draw");
+                    break;
+                case WHITE_WON:
+                    dialogController.gameOver("Game over! White won");
+                    break;
+                case BLACK_WON:
+                    dialogController.gameOver("Game over! Black won");
+                    break;
+            }
         }
     }
 

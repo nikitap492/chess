@@ -12,4 +12,5 @@ public interface TurnController {
 
     PieceColor whoseIsTurn();
 
+    void setCheckmateController(CheckmateController checkmateController);
 }
