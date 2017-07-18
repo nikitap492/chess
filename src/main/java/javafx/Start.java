@@ -47,6 +47,7 @@ public class Start extends Application{
         Image image = new Image("file:///" + dir.getAbsolutePath() + File.separator + "board.png");
         ImageView board = new ImageView();
         board.setImage(image);
+        board.setY(25);
 
 
         CellViewClickListener cellViewClickListener = new CellViewClickListener();
@@ -54,12 +55,13 @@ public class Start extends Application{
 
 
         LayoutRepositoryBuilder builder = new LayoutRepositoryBuilder();
-        CellLayoutRepository repository = builder.setCellHeight(80)
+        CellLayoutRepository repository = builder
+                .setCellHeight(80)
                 .setCellWidth(80)
                 .setOffsetX(82)
                 .setOffsetY(-82)
                 .setZeroX(40)
-                .setZeroY(614)
+                .setZeroY(639)
                 .setFactory(new CellPaneFactory(cellViewClickListener, pieceViewClickListener))
                 .build();
 
