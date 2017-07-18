@@ -11,12 +11,16 @@ import chess.domain.piece.Piece;
 import chess.domain.piece.PieceType;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static chess.domain.movement.MovementType.KILL;
 import static chess.domain.piece.PieceType.KING;
+import static java.util.stream.Collectors.*;
 
 /**
  * Created by nikitap4.92@gmail.com
@@ -80,12 +84,13 @@ public class CheckmateAnalyzer implements CheckmateController {
     }
 
     private boolean hasAnyMovements() {
-        return pieceController.pieces().values().stream()
-                .filter(this::nextTurnColor)
-                .flatMap(piece -> movementController.possible(piece).stream())
-                .findFirst()
-                .isPresent();
+        List<Movement> movements = pieceController.pieces().values().stream()
+                .filter(this::currentTurnColor)
+                .flatMap(piece -> movementController.all(piece).stream())
+                .collect(toList());
+        return movements.stream().anyMatch(this::isNonCheck);
     }
+
 
 
     private boolean isPossibleToKillTheKing(Movement movement) {
@@ -107,10 +112,14 @@ public class CheckmateAnalyzer implements CheckmateController {
 
     private Optional<Movement> hasMovementToSave(){
         return new HashMap<>(pieceController.pieces()).values().stream()
-                .filter(p -> p.getColor() == turnController.whoseIsTurn())
+                .filter(this::currentTurnColor)
                 .flatMap(this::pieceMovements)
                 .filter(this::isNonCheck)
                 .findAny();
+    }
+
+    private boolean currentTurnColor(Piece piece) {
+        return turnController.whoseIsTurn() == piece.getColor();
     }
 
 
