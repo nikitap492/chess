@@ -101,12 +101,12 @@ public class GameBuilder {
             pieceController.setMovementController(movementController);
             pieceController.setCheckmateController(checkmateController);
             turnController.setCheckmateController(checkmateController);
+            cellController.setPieceController(pieceController);
         }
 
         @Override
         public void newGame(PlayerType white, PlayerType black) {
             pieceController.arrangePieces();
-            movementController.clear();
             if(turnController.whoseIsTurn() == BLACK){
                 turnController.nextTurn();
             }

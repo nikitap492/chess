@@ -7,7 +7,6 @@ import chess.domain.piece.PieceType;
 import chess.repository.PieceRepository;
 import chess.view.PieceView;
 
-import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -35,4 +34,6 @@ public interface PieceController extends ClickSubscriber<PieceView> {
     void arrangePieces();
 
     PieceRepository repository();
+
+    Optional<Piece> selected();
 }

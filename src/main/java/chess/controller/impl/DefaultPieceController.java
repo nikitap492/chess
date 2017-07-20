@@ -15,6 +15,7 @@ import chess.repository.PieceRepository;
 import chess.view.PieceView;
 import chess.view.display.PieceDisplay;
 
+import java.util.Optional;
 import java.util.Set;
 
 import static chess.domain.cell.CellSelection.*;
@@ -34,6 +35,7 @@ class DefaultPieceController implements PieceController{
 
     private final TurnController turnController;
     private CheckmateController checkmateController;
+    private Piece selected;
 
 
     DefaultPieceController(PieceDisplay pieceDisplay, TurnController turnController) {
@@ -116,12 +118,18 @@ class DefaultPieceController implements PieceController{
     }
 
     @Override
+    public Optional<Piece> selected() {
+        return Optional.ofNullable(selected);
+    }
+
+    @Override
     public void update(Click<PieceView> t) {
         cellController.clear();
         Piece piece = t.target().piece();
 
         if (turnController.whoseIsTurn() == piece.getColor()) {
             cellController.display(piece.getCell(), SELECT);
+            selected = piece;
 
             Set<Movement> movements = movementController.forPiece(piece);
             for (Movement movement : movements) {

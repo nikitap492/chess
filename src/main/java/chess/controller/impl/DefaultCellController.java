@@ -3,6 +3,7 @@ package chess.controller.impl;
 import chess.command.Click;
 import chess.controller.CellController;
 import chess.controller.MovementController;
+import chess.controller.PieceController;
 import chess.domain.cell.Cell;
 import chess.domain.cell.CellSelection;
 import chess.view.CellView;
@@ -15,11 +16,16 @@ import chess.view.display.CellDisplay;
 class DefaultCellController implements CellController {
     private CellDisplay cellDisplay;
     private MovementController movementController;
+    private PieceController pieceController;
 
     DefaultCellController(CellDisplay cellDisplay) {
         this.cellDisplay = cellDisplay;
     }
 
+    @Override
+    public void setPieceController(PieceController pieceController) {
+        this.pieceController = pieceController;
+    }
 
     @Override
     public void setMovementController(MovementController movementController) {
@@ -41,6 +47,6 @@ class DefaultCellController implements CellController {
     @Override
     public void update(Click<CellView> click) {
         Cell cell = click.target().cell();
-        movementController.moveToCell(cell);
+        pieceController.selected().ifPresent(piece -> movementController.doMove(piece, cell));
     }
 }

@@ -27,7 +27,6 @@ import static chess.domain.piece.PieceType.PAWN;
  */
 public class DefaultMovementController implements MovementController {
     private MovementRepository movements;
-    private Set<Movement> possibleMovements;
     private final PieceController pieceController;
     private final TurnController turnController;
     private final CheckmateController checkmateController;
@@ -50,13 +49,7 @@ public class DefaultMovementController implements MovementController {
         this.gameController = gameController;
     }
 
-    @Override
-    public void moveToCell(Cell cell) {
-        Optional<Movement> any = possibleMovements.stream()
-                .filter(movement -> movement.getTo().equals(cell))
-                .findFirst();
-        any.ifPresent(this::doMove);
-    }
+
 
     @Override
     public void undo() {
@@ -70,12 +63,6 @@ public class DefaultMovementController implements MovementController {
         });
 
         checkmateController.nextTurn();
-    }
-
-    @Override
-    public void clear() {
-        movements.clear();
-        possibleMovements = null;
     }
 
     @Override
@@ -97,7 +84,6 @@ public class DefaultMovementController implements MovementController {
 
         pieceController.move(movement.getPiece(), movement.getTo());
         cellController.clear();
-        clear();
         turnController.nextTurn();
         gameController.nextTurn();
     }
@@ -110,6 +96,13 @@ public class DefaultMovementController implements MovementController {
     @Override
     public MovementAnalyzer analyzer() {
         return movementAnalyzer;
+    }
+
+    @Override
+    public void doMove(Piece piece, Cell cell) {
+        movementAnalyzer.possible(piece).stream()
+                .filter(movement -> movement.getTo().equals(cell))
+                .findFirst().ifPresent(this::doMove);
     }
 
     private void checkTransformForPawn(Movement movement){

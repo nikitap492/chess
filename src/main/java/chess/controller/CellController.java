@@ -11,6 +11,8 @@ import chess.view.CellView;
  */
 public interface CellController extends ClickSubscriber<CellView> {
 
+    void setPieceController(PieceController pieceController);
+
     void setMovementController(MovementController movementController);
 
     void clear();

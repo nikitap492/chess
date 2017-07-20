@@ -13,17 +13,13 @@ import java.util.Set;
  */
 public interface MovementController {
 
-
-    //todo Is it necessary method?
-    void moveToCell(Cell cell);
-
     void undo();
-
-    void clear();
 
     void doMove(Movement movement);
 
     Set<Movement> forPiece(Piece piece);
 
     MovementAnalyzer analyzer();
+
+    void doMove(Piece piece, Cell cell);
 }
