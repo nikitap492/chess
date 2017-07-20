@@ -137,7 +137,7 @@ public class MovementAnalyzer implements MovementController {
         movements.add(movement);
         switch (movement.getType()){
             case KILL:
-                pieceController.kill(piece);
+                pieceController.kill(movement.getPiece());
                 break;
             case CASTLING:
                 doCastling(movement);
@@ -206,5 +206,7 @@ public class MovementAnalyzer implements MovementController {
         movements.add(new Movement(rook, to, MOVE, null));
         pieceController.move(rook, to);
     }
+
+
 
 }
