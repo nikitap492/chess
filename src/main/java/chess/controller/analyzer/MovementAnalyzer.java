@@ -31,7 +31,6 @@ public class MovementAnalyzer implements MovementController {
 
     private MovementRepository movements;
     private Set<Movement> possibleMovements;
-    private Piece piece;
     private final BishopMovementAnalyzer bishopMovementAnalyzer;
     private final RookMovementAnalyzer rookMovementAnalyzer;
     private final QueenMovementAnalyzer queenMovementAnalyzer;
@@ -68,7 +67,6 @@ public class MovementAnalyzer implements MovementController {
     @Override
     public Set<Movement> possible(Piece piece) {
         analyzeGround.newAnalyze();
-        this.piece = piece;
         possibleMovements =  all(piece).stream()
                 .filter(checkmateController::isNonCheck)
                 .collect(toSet());
@@ -173,7 +171,7 @@ public class MovementAnalyzer implements MovementController {
         Digit digit = movement.getTo().getDigit();
         if (movement.getPiece().getType() == PAWN && (digit == ONE || digit == EIGHT)){
             PieceType pieceType = dialogController.transformDialog();
-            pieceController.transform(piece, pieceType);
+            pieceController.transform(movement.getPiece(), pieceType);
         }
     }
 
