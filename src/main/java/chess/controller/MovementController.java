@@ -1,12 +1,11 @@
 package chess.controller;
 
-import chess.controller.analyzer.MovementAnalyzeGround;
+import chess.controller.analyzer.MovementAnalyzer;
 import chess.domain.cell.Cell;
 import chess.domain.movement.Movement;
 import chess.domain.piece.Piece;
 
 import java.util.Set;
-import java.util.stream.Stream;
 
 /**
  * @author Poshivalov Nikita
@@ -14,24 +13,17 @@ import java.util.stream.Stream;
  */
 public interface MovementController {
 
-    Set<Movement> possible(Piece piece);
 
-    Set<Movement> all(Piece piece);
-
+    //todo Is it necessary method?
     void moveToCell(Cell cell);
 
     void undo();
 
     void clear();
 
-    void emulateMove(Movement movement);
-
     void doMove(Movement movement);
 
-    Stream<Movement> possible();
+    Set<Movement> forPiece(Piece piece);
 
-    void emulationStepBack();
-
-
-    MovementAnalyzeGround getAnalyzeGround();
+    MovementAnalyzer analyzer();
 }

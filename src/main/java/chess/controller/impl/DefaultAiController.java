@@ -16,7 +16,7 @@ public class DefaultAiController implements AiController {
 
     public DefaultAiController(MovementController movementController) {
         this.movementController = movementController;
-        this.valueAnalyzer = new MovementValueAnalyzer(movementController);
+        this.valueAnalyzer = new MovementValueAnalyzer(movementController.analyzer());
     }
 
     @Override

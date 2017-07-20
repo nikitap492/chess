@@ -15,9 +15,6 @@ import chess.repository.PieceRepository;
 import chess.view.PieceView;
 import chess.view.display.PieceDisplay;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 
 import static chess.domain.cell.CellSelection.*;
@@ -126,7 +123,7 @@ class DefaultPieceController implements PieceController{
         if (turnController.whoseIsTurn() == piece.getColor()) {
             cellController.display(piece.getCell(), SELECT);
 
-            Set<Movement> movements = movementController.possible(piece);
+            Set<Movement> movements = movementController.forPiece(piece);
             for (Movement movement : movements) {
                 Cell to = movement.getTo();
                 MovementType type = movement.getType();
@@ -146,9 +143,7 @@ class DefaultPieceController implements PieceController{
                 }
             }
         }
-        if (checkmateController.isCheck()){
-            check();
-        }
+        checkmateController.nextTurn();
     }
 
     //For initialization

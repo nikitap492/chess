@@ -1,6 +1,6 @@
 package chess.controller;
 
-import chess.domain.movement.Movement;
+import chess.controller.analyzer.MovementAnalyzer;
 
 /**
  * @author Poshivalov Nikita
@@ -8,11 +8,8 @@ import chess.domain.movement.Movement;
  */
 public interface CheckmateController {
 
-    void setMovementController(MovementController movementController);
+    //todo subcriber
+    void nextTurn();
 
-    boolean isNonCheck(Movement movement);
-
-    boolean isCheck();
-
-    void analyze();
+    void setMovementAnalyze(MovementAnalyzer analyzer);
 }

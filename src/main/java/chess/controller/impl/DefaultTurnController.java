@@ -2,7 +2,6 @@ package chess.controller.impl;
 
 import chess.controller.CheckmateController;
 import chess.controller.TurnController;
-import chess.controller.analyzer.CheckmateAnalyzer;
 import chess.domain.piece.PieceColor;
 
 import static chess.domain.piece.PieceColor.BLACK;
@@ -20,7 +19,7 @@ class DefaultTurnController implements TurnController {
     @Override
     public void nextTurn() {
         color = whoseIsNext();
-        checkmateController.analyze();
+        checkmateController.nextTurn();
     }
 
     @Override

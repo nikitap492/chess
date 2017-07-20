@@ -1,6 +1,5 @@
 package chess.controller.analyzer;
 
-import chess.controller.MovementController;
 import chess.domain.movement.Movement;
 import chess.domain.piece.PieceType;
 
@@ -11,9 +10,9 @@ import java.util.Comparator;
  * @since 18.07.2017.
  */
 public class MovementValueAnalyzer {
-    private final MovementController analyzer;
+    private final MovementAnalyzer analyzer;
 
-    public MovementValueAnalyzer(MovementController analyzer) {
+    public MovementValueAnalyzer(MovementAnalyzer analyzer) {
         this.analyzer = analyzer;
     }
 

@@ -3,8 +3,6 @@ package chess.controller.impl;
 import chess.command.CellViewClickListener;
 import chess.command.PieceViewClickListener;
 import chess.controller.*;
-import chess.controller.analyzer.CheckmateAnalyzer;
-import chess.controller.analyzer.MovementAnalyzer;
 import chess.domain.game.GameResult;
 import chess.domain.game.PlayerType;
 import chess.domain.piece.PieceColor;
@@ -93,11 +91,12 @@ public class GameBuilder {
 
             cellViewClickListener.addSubscriber(cellController);
 
-            CheckmateController checkmateController = new CheckmateAnalyzer(pieceController, turnController, this);
-            this.movementController = new MovementAnalyzer(this, pieceController, checkmateController, turnController, cellController, dialogController);
-            checkmateController.setMovementController(movementController);
+            CheckmateController checkmateController = new DefaultCheckmateController(pieceController, turnController, this);
+            this.movementController = new DefaultMovementController(this, pieceController, checkmateController, turnController, cellController, dialogController);
+            checkmateController.setMovementAnalyze(movementController.analyzer());
 
-            this.aiController = new AiControllerImpl(movementController);
+
+            this.aiController = new DefaultAiController(movementController);
             cellController.setMovementController(movementController);
             pieceController.setMovementController(movementController);
             pieceController.setCheckmateController(checkmateController);
