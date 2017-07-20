@@ -1,5 +1,6 @@
 package chess.controller;
 
+import chess.controller.analyzer.MovementAnalyzeGround;
 import chess.domain.cell.Cell;
 import chess.domain.movement.Movement;
 import chess.domain.piece.Piece;
@@ -32,6 +33,5 @@ public interface MovementController {
     void emulationStepBack();
 
 
-
-
+    MovementAnalyzeGround getAnalyzeGround();
 }

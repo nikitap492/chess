@@ -67,6 +67,7 @@ public class CheckmateAnalyzer implements CheckmateController {
         }else if (isDraw()) {
             gameController.over(GameResult.DRAW);
         }
+        gameController.nextTurn();
     }
 
     private boolean isCheckmate() {
@@ -79,7 +80,7 @@ public class CheckmateAnalyzer implements CheckmateController {
     }
 
     private boolean hasAnyMovements() {
-        List<Movement> movements = pieceRepository.pieces().values().stream()
+        List<Movement> movements = movementController.getAnalyzeGround().pieces().values().stream()
                 .filter(this::currentTurnColor)
                 .flatMap(piece -> movementController.all(piece).stream())
                 .collect(toList());
@@ -97,7 +98,7 @@ public class CheckmateAnalyzer implements CheckmateController {
     }
 
     private Optional<Movement> hasMovementsToKill() {
-        return pieceRepository.pieces().values().stream()
+        return movementController.getAnalyzeGround().pieces().values().stream()
                 .filter(this::nextTurnColor)
                 .flatMap(this::pieceMovements)
                 .filter(this::isPossibleToKillTheKing)
@@ -105,7 +106,7 @@ public class CheckmateAnalyzer implements CheckmateController {
     }
 
     private Optional<Movement> hasMovementToSave() {
-        return new HashMap<>(pieceRepository.pieces()).values().stream()
+        return new HashMap<>(movementController.getAnalyzeGround().pieces()).values().stream()
                 .filter(this::currentTurnColor)
                 .flatMap(this::pieceMovements)
                 .filter(this::isNonCheck)

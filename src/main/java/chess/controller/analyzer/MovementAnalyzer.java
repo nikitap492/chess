@@ -205,6 +205,8 @@ public class MovementAnalyzer implements MovementController {
         pieceController.move(rook, to);
     }
 
-
-
+    @Override
+    public MovementAnalyzeGround getAnalyzeGround() {
+        return analyzeGround;
+    }
 }
