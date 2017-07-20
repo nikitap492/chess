@@ -1,6 +1,7 @@
 package chess.controller.analyzer;
 
 import chess.controller.TurnController;
+import chess.domain.cell.Cell;
 import chess.domain.movement.Movement;
 import chess.domain.movement.MovementType;
 import chess.domain.piece.Piece;
@@ -8,10 +9,7 @@ import chess.domain.piece.PieceType;
 import chess.repository.MovementRepository;
 import chess.repository.PieceRepository;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Stream;
 
 import static chess.domain.movement.MovementType.KILL;
@@ -37,7 +35,7 @@ public class MovementAnalyzer {
     private final PieceRepository pieceRepository;
     private final MovementAnalyzeGround analyzeGround;
 
-    public MovementAnalyzer(TurnController turnController, PieceRepository pieceRepository,  MovementRepository movements) {
+    public MovementAnalyzer(TurnController turnController, PieceRepository pieceRepository, MovementRepository movements) {
         this.pieceRepository = pieceRepository;
         this.analyzeGround = new MovementAnalyzeGround(pieceRepository);
         this.bishopMovementAnalyzer = new BishopMovementAnalyzer(analyzeGround);
@@ -57,49 +55,10 @@ public class MovementAnalyzer {
                 .collect(toSet());
     }
 
-    public Set<Movement> all(Piece piece){
-        PieceType type = piece.getType();
-        switch (type){
-            case PAWN:
-                return pawnMovementAnalyzer.analyze(piece);
-            case KNIGHT:
-                return knightMovementAnalyzer.analyze(piece);
-            case BISHOP:
-                return bishopMovementAnalyzer.analyze(piece);
-            case ROOK:
-                return rookMovementAnalyzer.analyze(piece);
-            case QUEEN:
-                return queenMovementAnalyzer.analyze(piece);
-            case KING:
-                return kingMovementAnalyzer.analyze(piece);
-        }
-        return null;
-    }
 
     public void clear() {
         analyzeGround.newAnalyze();
     }
-
-    public void emulateMove(Movement movement){
-        analyzeGround.replace(movement);
-    }
-
-    public Stream<Movement> possible() {
-        return pieceRepository.pieces().values().stream()
-                .filter(piece -> piece.getColor() == turnController.whoseIsTurn())
-                .flatMap(piece -> all(piece).stream())
-                .filter(this::isNonCheck);
-    }
-
-    public void emulationStepBack() {
-        analyzeGround.stepBack();
-    }
-
-
-    public MovementAnalyzeGround getAnalyzeGround() {
-        return analyzeGround;
-    }
-
 
 
     public boolean hasAnyMovements() {
@@ -110,15 +69,53 @@ public class MovementAnalyzer {
         return movements.stream().anyMatch(this::isNonCheck);
     }
 
-
-    private boolean isPossibleToKillTheKing(Movement movement) {
-        MovementType type = movement.getType();
-        if (type != KILL) {
-            return false;
-        }
-        Optional<Piece> piece = analyzeGround.byCell(movement.getTo());
-        return piece.isPresent() && piece.get().getType() == KING;
+    Movement aiMovement() {
+        //todo
+        return analyzeGround.pieces().values().stream()
+                .filter(piece -> piece.getColor() == turnController.whoseIsTurn())
+                .flatMap(piece -> all(piece).stream())
+                .filter(this::isNonCheck)
+                .max((m1, m2) -> relativeValue(m1) - relativeValue(m2) - maxEnemyMovementValue(m1) + maxEnemyMovementValue(m2)).orElse(null);
     }
+
+
+    private int maxEnemyMovementValue(Movement movement) {
+        Map<Cell, Piece> pieces = analyzeGround.pieces();
+        emulateMove(movement);
+        turnController.nextTurn();
+        int value = analyzeGround.pieces().values().stream()
+                .filter(piece -> piece.getColor() == turnController.whoseIsTurn())
+                .flatMap(piece -> all(piece).stream())
+                .mapToInt(MovementAnalyzer::relativeValue)
+                .max().orElse(Integer.MAX_VALUE);
+        emulationStepBack();
+        if (!analyzeGround.pieces().equals(pieces)) throw new RuntimeException();
+
+        return value;
+    }
+
+    private static int relativeValue(Movement movement) {
+        return movement.getKilled()
+                .map(Piece::getType)
+                .map(pieceType -> {
+                    switch (pieceType) {
+                        case PAWN:
+                            return 1;
+                        case KNIGHT:
+                            return 3;
+                        case BISHOP:
+                            return 3;
+                        case ROOK:
+                            return 5;
+                        case QUEEN:
+                            return 9;
+                        case KING:
+                            return 999;
+                    }
+                    return 0;
+                }).orElse(0);
+    }
+
 
     public Optional<Movement> hasMovementsToKillKing() {
         return analyzeGround.pieces().values().stream()
@@ -136,6 +133,20 @@ public class MovementAnalyzer {
                 .findAny();
     }
 
+    private void emulationStepBack() {
+        analyzeGround.stepBack();
+    }
+
+    private boolean isPossibleToKillTheKing(Movement movement) {
+        MovementType type = movement.getType();
+        if (type != KILL) {
+            return false;
+        }
+        Optional<Piece> piece = analyzeGround.byCell(movement.getTo());
+        return piece.isPresent() && piece.get().getType() == KING;
+    }
+
+
     private boolean currentTurnColor(Piece piece) {
         return turnController.whoseIsTurn() == piece.getColor();
     }
@@ -149,11 +160,35 @@ public class MovementAnalyzer {
         return all(piece).stream();
     }
 
-    public boolean isNonCheck(Movement movement) {
+    private void emulateMove(Movement movement) {
+        analyzeGround.replace(movement);
+    }
+
+    private boolean isNonCheck(Movement movement) {
         emulateMove(movement);
         Optional<Movement> any = hasMovementsToKillKing();
         emulationStepBack();
         return !any.isPresent();
+    }
+
+
+    private Set<Movement> all(Piece piece) {
+        PieceType type = piece.getType();
+        switch (type) {
+            case PAWN:
+                return pawnMovementAnalyzer.analyze(piece);
+            case KNIGHT:
+                return knightMovementAnalyzer.analyze(piece);
+            case BISHOP:
+                return bishopMovementAnalyzer.analyze(piece);
+            case ROOK:
+                return rookMovementAnalyzer.analyze(piece);
+            case QUEEN:
+                return queenMovementAnalyzer.analyze(piece);
+            case KING:
+                return kingMovementAnalyzer.analyze(piece);
+        }
+        return Collections.emptySet();
     }
 
 

@@ -19,7 +19,6 @@ class DefaultTurnController implements TurnController {
     @Override
     public void nextTurn() {
         color = whoseIsNext();
-        checkmateController.nextTurn();
     }
 
     @Override

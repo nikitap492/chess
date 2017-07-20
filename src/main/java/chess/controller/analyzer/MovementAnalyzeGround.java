@@ -11,37 +11,37 @@ import java.util.*;
  * @author Poshivalov N.A.
  * @since 19.07.2017.
  */
-public class MovementAnalyzeGround {
+class MovementAnalyzeGround {
 
     private final PieceRepository pieceRepository;
-    private Queue<Map<Cell, Piece>> experimental;
+    private Deque<Map<Cell, Piece>> experimental;
 
-    public MovementAnalyzeGround(PieceRepository pieceRepository) {
+    MovementAnalyzeGround(PieceRepository pieceRepository) {
         this.pieceRepository = pieceRepository;
         this.experimental = new LinkedList<>(Arrays.asList(pieceRepository.pieces()));
     }
 
-    public Optional<Piece> byCell(Cell cell){
-        return Optional.ofNullable(experimental.element().get(cell));
+    Optional<Piece> byCell(Cell cell){
+        return Optional.ofNullable(experimental.getLast().get(cell));
     }
 
-    public Map<Cell, Piece> pieces(){
-        return experimental.element();
+    Map<Cell, Piece> pieces(){
+        return experimental.getLast();
     }
 
-    public void newAnalyze(){
+    void newAnalyze(){
         this.experimental = new LinkedList<>(Arrays.asList(pieceRepository.pieces()));
     }
 
-    public void replace(Movement movement) {
-        Map<Cell, Piece> arrangement = new HashMap<>(experimental.element());
+    void replace(Movement movement) {
+        Map<Cell, Piece> arrangement = new HashMap<>(experimental.getLast());
         movement.getKilled().ifPresent(piece -> arrangement.remove(piece.getCell()));
         arrangement.remove(movement.getFrom());
         arrangement.put(movement.getTo(), movement.getPiece());
-        experimental.add(arrangement);
+        experimental.addLast(arrangement);
     }
 
-    public void stepBack() {
-        experimental.remove();
+    void stepBack() {
+        experimental.removeLast();
     }
 }

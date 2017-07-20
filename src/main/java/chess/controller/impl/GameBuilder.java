@@ -70,6 +70,7 @@ public class GameBuilder {
         private final MovementController movementController;
         private final TurnController turnController;
         private final AiController aiController;
+        private final CheckmateController checkmateController;
         private PlayerType white;
         private PlayerType black;
 
@@ -102,6 +103,7 @@ public class GameBuilder {
             pieceController.setCheckmateController(checkmateController);
             turnController.setCheckmateController(checkmateController);
             cellController.setPieceController(pieceController);
+            this.checkmateController = checkmateController;
         }
 
         @Override
@@ -109,6 +111,7 @@ public class GameBuilder {
             pieceController.arrangePieces();
             if(turnController.whoseIsTurn() == BLACK){
                 turnController.nextTurn();
+                checkmateController.nextTurn();
             }
             this.white = white;
             this.black = black;
