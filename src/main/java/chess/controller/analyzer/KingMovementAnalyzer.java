@@ -1,12 +1,10 @@
 package chess.controller.analyzer;
 
-import chess.controller.PieceController;
 import chess.domain.cell.Cell;
 import chess.domain.cell.Char;
 import chess.domain.cell.Digit;
 import chess.domain.movement.Movement;
 import chess.domain.piece.Piece;
-import chess.repository.PieceRepository;
 
 import java.util.Optional;
 import java.util.Set;
@@ -20,11 +18,11 @@ import static chess.domain.movement.MovementType.CASTLING;
  */
 class KingMovementAnalyzer extends PieceMovementAnalyzer {
 
-    private final PieceRepository pieceRepository;
+    private final MovementAnalyzeGround analyzeGround;
 
-    KingMovementAnalyzer(PieceRepository pieceRepository) {
-        super(pieceRepository);
-        this.pieceRepository = pieceRepository;
+    KingMovementAnalyzer(MovementAnalyzeGround analyzeGround) {
+        super(analyzeGround);
+        this.analyzeGround = analyzeGround;
     }
 
     @Override
@@ -48,13 +46,13 @@ class KingMovementAnalyzer extends PieceMovementAnalyzer {
             Digit digit = cell.getDigit();
             int i = aChar.getOrder() + 1;
             while (H.getOrder() > i) {
-                Optional<Piece> optional = pieceRepository.byCell(Cell.of(get(i), digit));
+                Optional<Piece> optional = analyzeGround.byCell(Cell.of(get(i), digit));
                 if (optional.isPresent()) {
                     return;
                 }
                 i++;
             }
-            Optional<Piece> rook = pieceRepository.byCell(Cell.of(H, digit));
+            Optional<Piece> rook = analyzeGround.byCell(Cell.of(H, digit));
             if (rook.isPresent() && !rook.get().isMoved()) {
                 movements.add(new Movement(piece, Cell.of(G, digit), CASTLING));
             }
@@ -69,13 +67,13 @@ class KingMovementAnalyzer extends PieceMovementAnalyzer {
             Digit digit = cell.getDigit();
             int i = aChar.getOrder() - 1;
             while (A.getOrder() < i) {
-                Optional<Piece> optional = pieceRepository.byCell(Cell.of(get(i), digit));
+                Optional<Piece> optional = analyzeGround.byCell(Cell.of(get(i), digit));
                 if (optional.isPresent()) {
                     return;
                 }
                 i--;
             }
-            Optional<Piece> rook = pieceRepository.byCell(Cell.of(A, digit));
+            Optional<Piece> rook = analyzeGround.byCell(Cell.of(A, digit));
             if (rook.isPresent() && !rook.get().isMoved()) {
                 movements.add(new Movement(piece, Cell.of(C, digit), CASTLING));
             }

@@ -1,12 +1,10 @@
 package chess.controller.analyzer;
 
-import chess.controller.PieceController;
 import chess.domain.cell.Cell;
 import chess.domain.cell.Char;
 import chess.domain.cell.Digit;
 import chess.domain.movement.Movement;
 import chess.domain.piece.Piece;
-import chess.repository.PieceRepository;
 
 import java.util.HashSet;
 import java.util.Optional;
@@ -22,10 +20,10 @@ import static chess.domain.movement.MovementType.MOVE;
  */
 abstract class PieceMovementAnalyzer {
 
-    private PieceRepository pieceRepository;
+    private MovementAnalyzeGround analyzeGround;
 
-    PieceMovementAnalyzer(PieceRepository pieceRepository) {
-        this.pieceRepository = pieceRepository;
+    PieceMovementAnalyzer(MovementAnalyzeGround analyzeGround) {
+        this.analyzeGround = analyzeGround;
     }
 
     abstract void addMovements(Set<Movement> empty, Piece piece);
@@ -58,13 +56,13 @@ abstract class PieceMovementAnalyzer {
 
     private boolean addOneStepMovement(Set<Movement> movements, Piece piece, OrderStruct struct){
         Cell to = byStruct(struct);
-        Optional<Piece> other = pieceRepository.byCell(to);
+        Optional<Piece> other = analyzeGround.byCell(to);
         if (!other.isPresent()) {
             movements.add(new Movement(piece, to, MOVE));
             return true;
         } else {
             if (other.get().getColor() != piece.getColor()) {
-                movements.add(new Movement(piece, to, KILL));
+                movements.add(new Movement(piece, to, KILL, other.get()));
             }
             return false;
         }

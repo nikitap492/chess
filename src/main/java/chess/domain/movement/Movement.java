@@ -18,10 +18,15 @@ public class Movement {
     private Piece killed;
 
     public Movement(Piece piece, Cell to, MovementType type) {
+        this(piece, to, type, null);
+    }
+
+    public Movement(Piece piece, Cell to, MovementType type, Piece killed) {
         this.type = type;
         this.to = to;
         this.piece = piece;
         this.from = piece.getCell();
+        this.killed = killed;
     }
 
     public void setType(MovementType type) {

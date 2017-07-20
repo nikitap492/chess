@@ -1,13 +1,11 @@
 package chess.controller.analyzer;
 
-import chess.controller.PieceController;
 import chess.domain.cell.Cell;
 import chess.domain.cell.Digit;
 import chess.domain.movement.Movement;
 import chess.domain.piece.Piece;
 import chess.domain.piece.PieceColor;
 import chess.repository.MovementRepository;
-import chess.repository.PieceRepository;
 
 import java.util.HashSet;
 import java.util.Optional;
@@ -28,12 +26,12 @@ import static chess.domain.piece.PieceType.PAWN;
 class PawnMovementAnalyser extends PieceMovementAnalyzer {
 
 
-    private final PieceRepository pieceRepository;
+    private final MovementAnalyzeGround analyzeGround;
     private final MovementRepository repository;
 
-    PawnMovementAnalyser(PieceRepository pieceRepository, MovementRepository repository) {
-        super(pieceRepository);
-        this.pieceRepository = pieceRepository;
+    PawnMovementAnalyser(MovementAnalyzeGround analyzeGround, MovementRepository repository) {
+        super(analyzeGround);
+        this.analyzeGround = analyzeGround;
         this.repository = repository;
     }
 
@@ -104,7 +102,7 @@ class PawnMovementAnalyser extends PieceMovementAnalyzer {
 
     private boolean addStep(Set<Movement> movements, Piece piece, Digit digit) {
         Cell cell = Cell.of(piece.getCell().getChar(), digit);
-        Optional<Piece> optional = pieceRepository.byCell(cell);
+        Optional<Piece> optional = analyzeGround.byCell(cell);
         if (!optional.isPresent()) {
             movements.add(new Movement(piece, cell, MOVE));
             return false;
@@ -134,7 +132,7 @@ class PawnMovementAnalyser extends PieceMovementAnalyzer {
         Optional<Piece> enemy = piece(piece, enemyDirection);
         if (enemy.isPresent() && isCorrectPawn(enemy.get(), color) && isPawnNotCovered(piece, destinationDirection)) {
             Cell to = destinationEnPassant(piece, destinationDirection);
-            empty.add(new Movement(piece, to, EN_PASSANT));
+            empty.add(new Movement(piece, to, EN_PASSANT, enemy.get()));
         }
 
     }
@@ -144,7 +142,7 @@ class PawnMovementAnalyser extends PieceMovementAnalyzer {
         Optional<Piece> other = Optional.empty();
         if (direction.apply(struct)) {
             Cell c = byStruct(struct);
-            other = pieceRepository.byCell(c);
+            other = analyzeGround.byCell(c);
         }
         return other;
     }

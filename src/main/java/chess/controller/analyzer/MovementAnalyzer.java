@@ -13,13 +13,14 @@ import chess.repository.PieceRepository;
 
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static chess.domain.cell.Char.*;
 import static chess.domain.cell.Digit.EIGHT;
 import static chess.domain.cell.Digit.ONE;
-import static chess.domain.movement.MovementType.*;
+import static chess.domain.movement.MovementType.MOVE;
 import static chess.domain.piece.PieceType.PAWN;
+import static java.util.stream.Collectors.toSet;
 
 
 /**
@@ -43,30 +44,34 @@ public class MovementAnalyzer implements MovementController {
     private final CellController cellController;
     private final DialogController dialogController;
     private final PieceRepository pieceRepository;
+    private final MovementAnalyzeGround analyzeGround;
+    private final GameController gameController;
 
-    public MovementAnalyzer(PieceController pieceController, CheckmateController checkmateController, TurnController turnController, CellController cellController, DialogController dialogController) {
+    public MovementAnalyzer(GameController gameController, PieceController pieceController, CheckmateController checkmateController, TurnController turnController, CellController cellController, DialogController dialogController) {
         this.cellController = cellController;
         this.dialogController = dialogController;
         this.pieceRepository = pieceController.repository();
         this.movements = new InMemoryMovementRepository();
-        this.bishopMovementAnalyzer = new BishopMovementAnalyzer(pieceRepository);
-        this.rookMovementAnalyzer = new RookMovementAnalyzer(pieceRepository);
-        this.queenMovementAnalyzer = new QueenMovementAnalyzer(pieceRepository);
-        this.kingMovementAnalyzer = new KingMovementAnalyzer(pieceRepository);
-        this.pawnMovementAnalyzer = new PawnMovementAnalyser(pieceRepository, movements);
-        this.knightMovementAnalyzer = new KnightMovementAnalyzer(pieceRepository);
+        this.analyzeGround = new MovementAnalyzeGround(pieceRepository);
+        this.bishopMovementAnalyzer = new BishopMovementAnalyzer(analyzeGround);
+        this.rookMovementAnalyzer = new RookMovementAnalyzer(analyzeGround);
+        this.queenMovementAnalyzer = new QueenMovementAnalyzer(analyzeGround);
+        this.kingMovementAnalyzer = new KingMovementAnalyzer(analyzeGround);
+        this.pawnMovementAnalyzer = new PawnMovementAnalyser(analyzeGround, movements);
+        this.knightMovementAnalyzer = new KnightMovementAnalyzer(analyzeGround);
         this.pieceController = pieceController;
         this.turnController = turnController;
         this.checkmateController = checkmateController;
-
+        this.gameController = gameController;
     }
 
     @Override
     public Set<Movement> possible(Piece piece) {
+        analyzeGround.newAnalyze();
         this.piece = piece;
         possibleMovements =  all(piece).stream()
                 .filter(checkmateController::isNonCheck)
-                .collect(Collectors.toSet());
+                .collect(toSet());
         return possibleMovements;
     }
 
@@ -118,14 +123,21 @@ public class MovementAnalyzer implements MovementController {
     @Override
     public void clear() {
         movements.clear();
+        analyzeGround.newAnalyze();
+        possibleMovements = null;
     }
 
-    private void doMove(Movement movement) {
+    @Override
+    public void emulateMove(Movement movement){
+        analyzeGround.replace(movement);
+    }
+
+    @Override
+    public void doMove(Movement movement) {
         movements.add(movement);
         switch (movement.getType()){
             case KILL:
                 pieceController.kill(piece);
-                movement.setKilled(pieceRepository.byCell(movement.getTo()).orElseThrow(RuntimeException::new));
                 break;
             case CASTLING:
                 doCastling(movement);
@@ -137,9 +149,24 @@ public class MovementAnalyzer implements MovementController {
 
        checkTransformForPawn(movement);
 
-        pieceController.move(piece, movement.getTo());
+        pieceController.move(movement.getPiece(), movement.getTo());
         cellController.clear();
+        clear();
         turnController.nextTurn();
+        gameController.nextTurn();
+    }
+
+    @Override
+    public Stream<Movement> possible() {
+        return pieceRepository.pieces().values().stream()
+                .filter(piece -> piece.getColor() == turnController.whoseIsTurn())
+                .flatMap(piece -> all(piece).stream())
+                .filter(checkmateController::isNonCheck);
+    }
+
+    @Override
+    public void emulationStepBack() {
+        analyzeGround.stepBack();
     }
 
     private void checkTransformForPawn(Movement movement){
@@ -176,7 +203,7 @@ public class MovementAnalyzer implements MovementController {
     }
 
     private void rookCastlingMovement(Piece rook, Cell to){
-        movements.add(new Movement(rook, to, MOVE));
+        movements.add(new Movement(rook, to, MOVE, null));
         pieceController.move(rook, to);
     }
 

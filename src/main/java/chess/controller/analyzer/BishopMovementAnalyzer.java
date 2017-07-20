@@ -1,9 +1,7 @@
 package chess.controller.analyzer;
 
-import chess.controller.PieceController;
 import chess.domain.movement.Movement;
 import chess.domain.piece.Piece;
-import chess.repository.PieceRepository;
 
 import java.util.Set;
 
@@ -13,8 +11,8 @@ import java.util.Set;
  */
 class BishopMovementAnalyzer extends PieceMovementAnalyzer {
 
-    BishopMovementAnalyzer(PieceRepository pieceRepository) {
-        super(pieceRepository);
+    BishopMovementAnalyzer(MovementAnalyzeGround analyzeGround) {
+        super(analyzeGround);
     }
 
     void addMovements(Set<Movement> movements, Piece piece){

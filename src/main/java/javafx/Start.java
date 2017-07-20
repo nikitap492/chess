@@ -2,14 +2,10 @@ package javafx;
 
 import chess.command.CellViewClickListener;
 import chess.command.PieceViewClickListener;
-import chess.controller.*;
-import chess.controller.analyzer.CheckmateAnalyzer;
-import chess.controller.analyzer.MovementAnalyzer;
-import chess.controller.impl.*;
-import chess.view.display.CellDisplay;
-import chess.view.display.DefaultCellDisplay;
-import chess.view.display.DefaultPieceDisplay;
-import chess.view.display.PieceDisplay;
+import chess.controller.DialogController;
+import chess.controller.GameController;
+import chess.controller.impl.GameBuilder;
+import chess.domain.game.PlayerType;
 import chess.repository.CellLayoutRepository;
 import chess.view.layout.LayoutRepositoryBuilder;
 import javafx.application.Application;
@@ -25,7 +21,6 @@ import javafx.view.layout.CellPaneFactory;
 import javafx.view.menu.Options;
 
 import java.io.File;
-import java.nio.file.Files;
 import java.util.stream.Collectors;
 
 /**
@@ -77,7 +72,7 @@ public class Start extends Application{
                 .build();
 
         dialogController.setGameController(gameController);
-        gameController.newGame();
+        gameController.newGame(PlayerType.HUMAN, PlayerType.AI);
 
         Pane pane = new Pane(board);
         Options options = new Options(dialogController,  gameController);

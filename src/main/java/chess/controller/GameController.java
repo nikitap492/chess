@@ -1,6 +1,7 @@
 package chess.controller;
 
-import chess.domain.GameResult;
+import chess.domain.game.GameResult;
+import chess.domain.game.PlayerType;
 
 /**
  * Created by nikitap4.92@gmail.com
@@ -8,11 +9,13 @@ import chess.domain.GameResult;
  */
 public interface GameController{
 
-    void newGame();
+    void newGame(PlayerType white, PlayerType black);
 
     void exit();
 
     void undo();
 
     void over(GameResult draw);
+
+    void nextTurn();
 }

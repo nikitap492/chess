@@ -1,8 +1,7 @@
 package chess.controller.analyzer;
 
 import chess.controller.*;
-import chess.domain.GameResult;
-import chess.domain.cell.Cell;
+import chess.domain.game.GameResult;
 import chess.domain.movement.Movement;
 import chess.domain.movement.MovementType;
 import chess.domain.piece.Piece;
@@ -11,13 +10,12 @@ import chess.repository.PieceRepository;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
 
 import static chess.domain.movement.MovementType.KILL;
 import static chess.domain.piece.PieceType.KING;
-import static java.util.stream.Collectors.*;
+import static java.util.stream.Collectors.toList;
 
 /**
  * Created by nikitap4.92@gmail.com
@@ -46,26 +44,9 @@ public class CheckmateAnalyzer implements CheckmateController {
 
     @Override
     public boolean isNonCheck(Movement movement) {
-        Piece piece = movement.getPiece();
-        Map<Cell, Piece> pieces = pieceRepository.pieces();
-
-        Piece target = pieces.get(movement.getTo());
-
-        pieces.remove(piece.getCell());
-
-        Piece copy = new Piece(piece);
-        copy.setCell(movement.getTo());
-        pieces.put(copy.getCell(), copy);
-
-
+        movementController.emulateMove(movement);
         Optional<Movement> any = hasMovementsToKill();
-
-        pieces.remove(copy.getCell());
-        pieces.put(piece.getCell(), piece);
-        if (target != null) {
-            pieces.put(target.getCell(), target);
-        }
-
+        movementController.emulationStepBack();
         return !any.isPresent();
     }
 

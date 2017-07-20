@@ -5,6 +5,7 @@ import chess.domain.movement.Movement;
 import chess.domain.piece.Piece;
 
 import java.util.Set;
+import java.util.stream.Stream;
 
 /**
  * @author Poshivalov Nikita
@@ -21,4 +22,16 @@ public interface MovementController {
     void undo();
 
     void clear();
+
+    void emulateMove(Movement movement);
+
+    void doMove(Movement movement);
+
+    Stream<Movement> possible();
+
+    void emulationStepBack();
+
+
+
+
 }

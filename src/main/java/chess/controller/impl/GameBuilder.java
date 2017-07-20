@@ -5,17 +5,20 @@ import chess.command.PieceViewClickListener;
 import chess.controller.*;
 import chess.controller.analyzer.CheckmateAnalyzer;
 import chess.controller.analyzer.MovementAnalyzer;
-import chess.domain.GameResult;
+import chess.domain.game.GameResult;
+import chess.domain.game.PlayerType;
+import chess.domain.piece.PieceColor;
 import chess.repository.CellImageRepository;
 import chess.repository.CellLayoutRepository;
 import chess.repository.PieceImageRepository;
-import chess.repository.PieceRepository;
 import chess.view.display.CellDisplay;
 import chess.view.display.DefaultCellDisplay;
 import chess.view.display.DefaultPieceDisplay;
 import chess.view.display.PieceDisplay;
 
+import static chess.domain.game.PlayerType.AI;
 import static chess.domain.piece.PieceColor.BLACK;
+import static chess.domain.piece.PieceColor.WHITE;
 
 /**
  * Created by nikitap4.92@gmail.com
@@ -68,6 +71,9 @@ public class GameBuilder {
         private final PieceController pieceController;
         private final MovementController movementController;
         private final TurnController turnController;
+        private final AiController aiController;
+        private PlayerType white;
+        private PlayerType black;
 
         DefaultGameController(PieceImageRepository pieceImageRepository, CellImageRepository cellImageRepository,
                                      CellLayoutRepository cellLayoutRepository, CellViewClickListener cellViewClickListener,
@@ -78,6 +84,7 @@ public class GameBuilder {
             this.turnController = new DefaultTurnController();
             this.pieceController =  new DefaultPieceController(pieceDisplay, turnController);
 
+
             pieceViewClickListener.addSubscriber(pieceController);
 
             CellDisplay cellDisplay = new DefaultCellDisplay(cellImageRepository, cellLayoutRepository);
@@ -87,9 +94,10 @@ public class GameBuilder {
             cellViewClickListener.addSubscriber(cellController);
 
             CheckmateController checkmateController = new CheckmateAnalyzer(pieceController, turnController, this);
-            this.movementController = new MovementAnalyzer(pieceController, checkmateController, turnController, cellController, dialogController);
+            this.movementController = new MovementAnalyzer(this, pieceController, checkmateController, turnController, cellController, dialogController);
             checkmateController.setMovementController(movementController);
 
+            this.aiController = new AiControllerImpl(movementController);
             cellController.setMovementController(movementController);
             pieceController.setMovementController(movementController);
             pieceController.setCheckmateController(checkmateController);
@@ -97,13 +105,17 @@ public class GameBuilder {
         }
 
         @Override
-        public void newGame() {
+        public void newGame(PlayerType white, PlayerType black) {
             pieceController.arrangePieces();
             movementController.clear();
             if(turnController.whoseIsTurn() == BLACK){
                 turnController.nextTurn();
             }
+            this.white = white;
+            this.black = black;
         }
+
+
 
         @Override
         public void exit() {
@@ -127,6 +139,17 @@ public class GameBuilder {
                 case BLACK_WON:
                     dialogController.gameOver("Game over! Black won");
                     break;
+            }
+        }
+
+        @Override
+        public void nextTurn() {
+            PieceColor color = turnController.whoseIsTurn();
+            if (color == WHITE && white == AI){
+                aiController.doMove();
+            }
+            if (color == BLACK && black == AI){
+                aiController.doMove();
             }
         }
     }

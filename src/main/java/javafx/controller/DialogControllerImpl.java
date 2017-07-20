@@ -2,6 +2,7 @@ package javafx.controller;
 
 import chess.controller.DialogController;
 import chess.controller.GameController;
+import chess.domain.game.PlayerType;
 import chess.domain.piece.PieceType;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonBar;
@@ -87,7 +88,7 @@ public class DialogControllerImpl implements DialogController {
         newGame.getButtonTypes().setAll(yes, no);
         Optional<ButtonType> result = newGame.showAndWait();
         if (result.get() == yes) {
-            gameController.newGame();
+            gameController.newGame(PlayerType.HUMAN, PlayerType.AI);
         }
         if (result.get() == no) {
             gameController.exit();

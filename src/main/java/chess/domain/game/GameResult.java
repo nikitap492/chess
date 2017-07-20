@@ -1,4 +1,4 @@
-package chess.domain;
+package chess.domain.game;
 
 /**
  * @author Poshivalov N.A.

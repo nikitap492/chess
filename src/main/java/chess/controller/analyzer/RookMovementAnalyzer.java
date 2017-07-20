@@ -1,9 +1,7 @@
 package chess.controller.analyzer;
 
-import chess.controller.PieceController;
 import chess.domain.movement.Movement;
 import chess.domain.piece.Piece;
-import chess.repository.PieceRepository;
 
 import java.util.Set;
 
@@ -13,8 +11,8 @@ import java.util.Set;
  */
 class RookMovementAnalyzer extends PieceMovementAnalyzer {
 
-    RookMovementAnalyzer(PieceRepository pieceRepository) {
-        super(pieceRepository);
+    RookMovementAnalyzer(MovementAnalyzeGround analyzeGround) {
+        super(analyzeGround);
     }
 
     @Override
